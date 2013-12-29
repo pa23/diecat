@@ -22,6 +22,9 @@
 #define MAINWINDOW_HPP
 
 #include <QMainWindow>
+#include <QString>
+#include <QSettings>
+#include <QDir>
 
 namespace Ui {
 class MainWindow;
@@ -42,6 +45,11 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    QString m_lastPath = QDir::currentPath();
+    QSettings m_progSettings;
+
+    void writeProgramSettings();
+    void readProgramSettings();
 
 };
 
