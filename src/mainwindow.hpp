@@ -49,6 +49,8 @@ private slots:
     void on_action_ResetAllChanges_triggered();
     void on_action_About_triggered();
 
+    void itemChanged(int);
+
 private:
     Ui::MainWindow *ui;
     QString m_lastA2LPath = QDir::currentPath();
@@ -58,6 +60,9 @@ private:
 
     void writeProgramSettings();
     void readProgramSettings();
+
+    void prepareInfoTable();
+    void clearInfoTable();
 
     void readA2LInfo(const QString &);
     void showData();

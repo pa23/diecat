@@ -48,6 +48,11 @@ MainWindow::MainWindow(QWidget *parent) :
     //
 
     readProgramSettings();
+    prepareInfoTable();
+
+    //
+
+    connect(ui->listWidget_Labels, SIGNAL(currentRowChanged(int)), this, SLOT(itemChanged(int)));
 }
 
 MainWindow::~MainWindow() {
@@ -95,7 +100,7 @@ void MainWindow::on_action_OpenProject_triggered() {
 
     ui->lineEdit_QuickSearch->clear();
     ui->listWidget_Labels->clear();
-    ui->tableWidget_ValuesEditor->clear();
+    clearInfoTable();
     m_scalars.clear();
 
     readA2LInfo(a2lFileName);
@@ -172,12 +177,49 @@ void MainWindow::readProgramSettings() {
     m_progSettings.endGroup();
 }
 
+void MainWindow::prepareInfoTable() {
+
+    ui->tableWidget_ValuesEditor->setRowCount(5);
+
+    ui->tableWidget_ValuesEditor->setItem(0, 0, new QTableWidgetItem("Name"));
+    ui->tableWidget_ValuesEditor->setItem(0, 1, new QTableWidgetItem(""));
+    ui->tableWidget_ValuesEditor->setItem(1, 0, new QTableWidgetItem("Description"));
+    ui->tableWidget_ValuesEditor->setItem(1, 1, new QTableWidgetItem(""));
+    ui->tableWidget_ValuesEditor->setItem(2, 0, new QTableWidgetItem("Address"));
+    ui->tableWidget_ValuesEditor->setItem(2, 1, new QTableWidgetItem(""));
+    ui->tableWidget_ValuesEditor->setItem(3, 0, new QTableWidgetItem("Min value"));
+    ui->tableWidget_ValuesEditor->setItem(3, 1, new QTableWidgetItem(""));
+    ui->tableWidget_ValuesEditor->setItem(4, 0, new QTableWidgetItem("Max value"));
+    ui->tableWidget_ValuesEditor->setItem(4, 1, new QTableWidgetItem(""));
+
+    for ( ptrdiff_t i=0; i<ui->tableWidget_ValuesEditor->rowCount(); i++ ) {
+
+        for ( ptrdiff_t j=0; j<ui->tableWidget_ValuesEditor->columnCount(); j++ ) {
+
+            ui->tableWidget_ValuesEditor->item(i, j)->setFlags(ui->tableWidget_ValuesEditor->item(i, j)->flags() ^ Qt::ItemIsEditable);
+        }
+    }
+
+    ui->tableWidget_ValuesEditor->resizeRowsToContents();
+    ui->tableWidget_ValuesEditor->resizeColumnsToContents();
+}
+
+void MainWindow::clearInfoTable() {
+
+    ui->tableWidget_ValuesEditor->item(0, 1)->setText("");
+    ui->tableWidget_ValuesEditor->item(1, 1)->setText("");
+    ui->tableWidget_ValuesEditor->item(2, 1)->setText("");
+    ui->tableWidget_ValuesEditor->item(3, 1)->setText("");
+    ui->tableWidget_ValuesEditor->item(4, 1)->setText("");
+
+    ui->tableWidget_ValuesEditor->resizeColumnsToContents();
+}
+
 void MainWindow::readA2LInfo(const QString &filepath) {
 
     QSharedPointer<A2L> a2l(new A2L(filepath));
 
     if ( !a2l->readFile() ) {
-
         QMessageBox::critical(this, QString(PROGNAME) + ": error", "Error occured during a2l file reading!");
         a2l.clear();
         return;
@@ -189,7 +231,17 @@ void MainWindow::readA2LInfo(const QString &filepath) {
 void MainWindow::showData() {
 
     for ( ptrdiff_t i=0; i<m_scalars.size(); i++ ) {
-
         ui->listWidget_Labels->addItem(m_scalars[i]->name());
     }
+}
+
+void MainWindow::itemChanged(int currItemInd) {
+
+    ui->tableWidget_ValuesEditor->item(0, 1)->setText(m_scalars[currItemInd]->name());
+    ui->tableWidget_ValuesEditor->item(1, 1)->setText(m_scalars[currItemInd]->shortDescription());
+    ui->tableWidget_ValuesEditor->item(2, 1)->setText(m_scalars[currItemInd]->address());
+    ui->tableWidget_ValuesEditor->item(3, 1)->setText(QString::number(m_scalars[currItemInd]->minValue()));
+    ui->tableWidget_ValuesEditor->item(4, 1)->setText(QString::number(m_scalars[currItemInd]->maxValue()));
+
+    ui->tableWidget_ValuesEditor->resizeColumnsToContents();
 }
