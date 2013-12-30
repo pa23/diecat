@@ -26,10 +26,12 @@ TARGET = diecat
 TEMPLATE = app
 
 SOURCES += src/main.cpp \
-    src/mainwindow.cpp
+    src/mainwindow.cpp \
+    src/a2l.cpp
 
 HEADERS += src/mainwindow.hpp \
-    src/constants.hpp
+    src/constants.hpp \
+    src/a2l.hpp
 
 FORMS += forms/mainwindow.ui
 
