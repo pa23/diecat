@@ -26,6 +26,8 @@
 #include <QSettings>
 #include <QDir>
 
+#include "ecuscalar.hpp"
+
 namespace Ui {
 class MainWindow;
 }
@@ -49,11 +51,16 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    QString m_lastPath = QDir::currentPath();
+    QString m_lastA2LPath = QDir::currentPath();
+    QString m_lastHEXPath = QDir::currentPath();
     QSettings m_progSettings;
+    QVector< QSharedPointer<ECUScalar> > m_scalars;
 
     void writeProgramSettings();
     void readProgramSettings();
+
+    void readA2LInfo(const QString &);
+    void showData();
 
 };
 

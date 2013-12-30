@@ -20,17 +20,21 @@
 
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
-
 #include "constants.hpp"
+#include "a2l.hpp"
+#include "ecuscalar.hpp"
 
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QString>
+#include <QVector>
+#include <QSharedPointer>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    m_progSettings("pa23software", "diecat") {
+    m_progSettings("pa23software", PROGNAME) {
 
     ui->setupUi(this);
 
@@ -59,7 +63,7 @@ void MainWindow::on_action_OpenProject_triggered() {
                 QFileDialog::getOpenFileName(
                     this,
                     tr("Open a2l file..."),
-                    m_lastPath,
+                    m_lastA2LPath,
                     QString::fromLatin1("a2l files (*.a2l);;All files (*)"),
                     0, 0)
                 );
@@ -69,13 +73,13 @@ void MainWindow::on_action_OpenProject_triggered() {
     }
 
     QFileInfo a2lFileInfo(a2lFileName);
-    m_lastPath = a2lFileInfo.absolutePath(); QMessageBox::information(this, "", m_lastPath);
+    m_lastA2LPath = a2lFileInfo.absolutePath();
 
     const QString hexFileName(
                 QFileDialog::getOpenFileName(
                     this,
                     tr("Open hex file..."),
-                    m_lastPath,
+                    m_lastHEXPath,
                     QString::fromLatin1("hex files (*.hex);;All files (*)"),
                     0, 0)
                 );
@@ -85,7 +89,17 @@ void MainWindow::on_action_OpenProject_triggered() {
     }
 
     QFileInfo hexFileInfo(hexFileName);
-    m_lastPath = hexFileInfo.absolutePath(); QMessageBox::information(this, "", m_lastPath);
+    m_lastHEXPath = hexFileInfo.absolutePath();
+
+    //
+
+    ui->lineEdit_QuickSearch->clear();
+    ui->listWidget_Labels->clear();
+    ui->tableWidget_ValuesEditor->clear();
+    m_scalars.clear();
+
+    readA2LInfo(a2lFileName);
+    showData();
 }
 
 void MainWindow::on_action_SaveChangesInHex_triggered() {
@@ -137,14 +151,15 @@ void MainWindow::on_action_About_triggered() {
             "along with this program. If not, see <a href=\"http://www.gnu.org/licenses/\">"
             "http://www.gnu.org/licenses/</a>.<br>";
 
-    QMessageBox::about(this, tr("About diecat"), str);
+    QMessageBox::about(this, "About " + QString(PROGNAME), str);
 }
 
 void MainWindow::writeProgramSettings() {
 
     m_progSettings.beginGroup("/settings");
     m_progSettings.setValue("/window_geometry", geometry());
-    m_progSettings.setValue("/last_path", m_lastPath);
+    m_progSettings.setValue("/last_a2l_path", m_lastA2LPath);
+    m_progSettings.setValue("/last_hex_path", m_lastHEXPath);
     m_progSettings.endGroup();
 }
 
@@ -152,6 +167,29 @@ void MainWindow::readProgramSettings() {
 
     m_progSettings.beginGroup("/settings");
     setGeometry(m_progSettings.value("/window_geometry", QRect(20, 40, 0, 0)).toRect());
-    m_lastPath = m_progSettings.value("/last_path", QDir::currentPath()).toString();
+    m_lastA2LPath = m_progSettings.value("/last_a2l_path", QDir::currentPath()).toString();
+    m_lastHEXPath = m_progSettings.value("/last_hex_path", QDir::currentPath()).toString();
     m_progSettings.endGroup();
+}
+
+void MainWindow::readA2LInfo(const QString &filepath) {
+
+    QSharedPointer<A2L> a2l(new A2L(filepath));
+
+    if ( !a2l->readFile() ) {
+
+        QMessageBox::critical(this, QString(PROGNAME) + ": error", "Error occured during a2l file reading!");
+        a2l.clear();
+        return;
+    }
+
+    a2l->fillScalarsInfo(m_scalars);
+}
+
+void MainWindow::showData() {
+
+    for ( ptrdiff_t i=0; i<m_scalars.size(); i++ ) {
+
+        ui->listWidget_Labels->addItem(m_scalars[i]->name());
+    }
 }

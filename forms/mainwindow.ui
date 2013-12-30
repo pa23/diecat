@@ -39,21 +39,18 @@
           <widget class="QLineEdit" name="lineEdit_QuickSearch"/>
          </item>
          <item>
-          <widget class="QListView" name="listView_Labels">
+          <widget class="QListWidget" name="listWidget_Labels">
            <property name="minimumSize">
             <size>
-             <width>255</width>
+             <width>350</width>
              <height>0</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>255</width>
+             <width>350</width>
              <height>16777215</height>
             </size>
-           </property>
-           <property name="selectionMode">
-            <enum>QAbstractItemView::MultiSelection</enum>
            </property>
           </widget>
          </item>
