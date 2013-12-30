@@ -88,8 +88,29 @@ void MainWindow::on_action_OpenProject_triggered() {
     m_lastPath = hexFileInfo.absolutePath(); QMessageBox::information(this, "", m_lastPath);
 }
 
-void MainWindow::on_action_Quit_triggered() {
-    close();
+void MainWindow::on_action_SaveChangesInHex_triggered() {
+
+    //
+}
+
+void MainWindow::on_action_Undo_triggered() {
+
+    //
+}
+
+void MainWindow::on_action_Redo_triggered() {
+
+    //
+}
+
+void MainWindow::on_action_ResetSelections_triggered() {
+
+    //
+}
+
+void MainWindow::on_action_ResetAllChanges_triggered() {
+
+    //
 }
 
 void MainWindow::on_action_About_triggered() {

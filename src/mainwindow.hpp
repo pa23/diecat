@@ -40,7 +40,11 @@ public:
 
 private slots:
     void on_action_OpenProject_triggered();
-    void on_action_Quit_triggered();
+    void on_action_SaveChangesInHex_triggered();
+    void on_action_Undo_triggered();
+    void on_action_Redo_triggered();
+    void on_action_ResetSelections_triggered();
+    void on_action_ResetAllChanges_triggered();
     void on_action_About_triggered();
 
 private:
