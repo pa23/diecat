@@ -21,10 +21,28 @@
 #ifndef A2L_HPP
 #define A2L_HPP
 
+#include <QString>
+#include <QVector>
+#include <QStringList>
+#include <QSharedPointer>
+
+#include "ecuscalar.hpp"
+
 class A2L {
 
 public:
-    A2L();
+    A2L(const QString &); // takes a2l file path
+    bool readFile();
+    void fillScalarsInfo(QVector< QSharedPointer<ECUScalar> > &) const;
+    void clear();
+
+private:
+    QString m_a2lpath;
+    QVector<QStringList> m_scalarsInfo;
+    QVector<QStringList> m_compumethodsInfo;
+    bool checkVector(const QVector<QStringList> &, ptrdiff_t) const;
+    QString findCompuMethod(const QString &) const;
+    QVector<double> getCoeff(const QString &) const;
 
 };
 

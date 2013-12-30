@@ -2,7 +2,7 @@
     diecat
     Diesel engines calibration tool.
 
-    File: constants.hpp
+    File: ecuscalar.cpp
 
     Copyright (C) 2013 Artem Petrov <pa2311@gmail.com>
 
@@ -18,16 +18,31 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CONSTANTS_HPP
-#define CONSTANTS_HPP
+#include "ecuscalar.hpp"
 
-#define PROGNAME "diecat"
-#define PROGVER  "0.1.0"
+ECUScalar::ECUScalar() {
+}
 
-#define A2LCHARACTERISTIC 11 // number of usable strings in a2l characteristic block
-#define A2LCOMPUMETHOD 9     // number of usable strings in a2l compu_method block
-#define A2LSCALARINFO 9      // number of strings with info for scalars
-#define A2LCOMPUMETHODINFO 6 // number of strings with info for compu_methods
-#define A2LCOEFFNUM 6
+void ECUScalar::setName(const QString &name) {
+    m_name = name;
+}
 
-#endif // CONSTANTS_HPP
+void ECUScalar::setShortDescription(const QString &shortDescr) {
+    m_shortDescr = shortDescr;
+}
+
+void ECUScalar::setAddress(const QString &addr) {
+    m_addr = addr;
+}
+
+void ECUScalar::setCoefficients(const QVector<double> &coeff) {
+    m_coeff = coeff;
+}
+
+void ECUScalar::setMinValue(double minVal) {
+    m_minVal = minVal;
+}
+
+void ECUScalar::setMaxValue(double maxVal) {
+    m_maxVal = maxVal;
+}

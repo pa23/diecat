@@ -27,11 +27,13 @@ TEMPLATE = app
 
 SOURCES += src/main.cpp \
     src/mainwindow.cpp \
-    src/a2l.cpp
+    src/a2l.cpp \
+    src/ecuscalar.cpp
 
 HEADERS += src/mainwindow.hpp \
     src/constants.hpp \
-    src/a2l.hpp
+    src/a2l.hpp \
+    src/ecuscalar.hpp
 
 FORMS += forms/mainwindow.ui
 
