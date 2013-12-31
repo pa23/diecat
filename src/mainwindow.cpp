@@ -179,7 +179,7 @@ void MainWindow::readProgramSettings() {
 
 void MainWindow::prepareInfoTable() {
 
-    ui->tableWidget_ValuesEditor->setRowCount(5);
+    ui->tableWidget_ValuesEditor->setRowCount(6);
 
     ui->tableWidget_ValuesEditor->setItem(0, 0, new QTableWidgetItem("Name"));
     ui->tableWidget_ValuesEditor->setItem(0, 1, new QTableWidgetItem(""));
@@ -191,12 +191,15 @@ void MainWindow::prepareInfoTable() {
     ui->tableWidget_ValuesEditor->setItem(3, 1, new QTableWidgetItem(""));
     ui->tableWidget_ValuesEditor->setItem(4, 0, new QTableWidgetItem("Max value"));
     ui->tableWidget_ValuesEditor->setItem(4, 1, new QTableWidgetItem(""));
+    ui->tableWidget_ValuesEditor->setItem(5, 0, new QTableWidgetItem("Dimension"));
+    ui->tableWidget_ValuesEditor->setItem(5, 1, new QTableWidgetItem(""));
 
     for ( ptrdiff_t i=0; i<ui->tableWidget_ValuesEditor->rowCount(); i++ ) {
 
         for ( ptrdiff_t j=0; j<ui->tableWidget_ValuesEditor->columnCount(); j++ ) {
 
-            ui->tableWidget_ValuesEditor->item(i, j)->setFlags(ui->tableWidget_ValuesEditor->item(i, j)->flags() ^ Qt::ItemIsEditable);
+            ui->tableWidget_ValuesEditor->item(i, j)->
+                    setFlags(ui->tableWidget_ValuesEditor->item(i, j)->flags() ^ Qt::ItemIsEditable);
         }
     }
 
@@ -211,6 +214,7 @@ void MainWindow::clearInfoTable() {
     ui->tableWidget_ValuesEditor->item(2, 1)->setText("");
     ui->tableWidget_ValuesEditor->item(3, 1)->setText("");
     ui->tableWidget_ValuesEditor->item(4, 1)->setText("");
+    ui->tableWidget_ValuesEditor->item(5, 1)->setText("");
 
     ui->tableWidget_ValuesEditor->resizeColumnsToContents();
 }
@@ -242,6 +246,7 @@ void MainWindow::itemChanged(int currItemInd) {
     ui->tableWidget_ValuesEditor->item(2, 1)->setText(m_scalars[currItemInd]->address());
     ui->tableWidget_ValuesEditor->item(3, 1)->setText(QString::number(m_scalars[currItemInd]->minValue()));
     ui->tableWidget_ValuesEditor->item(4, 1)->setText(QString::number(m_scalars[currItemInd]->maxValue()));
+    ui->tableWidget_ValuesEditor->item(5, 1)->setText(m_scalars[currItemInd]->dimension());
 
     ui->tableWidget_ValuesEditor->resizeColumnsToContents();
 }

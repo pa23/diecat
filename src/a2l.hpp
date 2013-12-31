@@ -41,9 +41,10 @@ private:
     QVector<QStringList> m_scalarsInfo;
     QVector<QStringList> m_compumethodsInfo;
 
-    bool checkVector(const QVector<QStringList> &, ptrdiff_t) const;
-    QString findCompuMethod(const QString &) const;
-    QVector<double> getCoeff(const QString &) const;
+    bool isScalar(const QStringList &) const;
+    ptrdiff_t findCompuMethod(const QString &) const;
+    QVector<double> getCoeff(ptrdiff_t) const;
+    bool isReadOnly(ptrdiff_t) const;
 
 };
 

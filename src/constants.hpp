@@ -24,10 +24,7 @@
 #define PROGNAME "diecat"
 #define PROGVER  "0.1.0"
 
-#define A2LCHARACTERISTIC 11 // number of usable strings in a2l characteristic block
-#define A2LCOMPUMETHOD 9     // number of usable strings in a2l compu_method block
-#define A2LSCALARINFO 9      // number of strings with info for scalars
-#define A2LCOMPUMETHODINFO 6 // number of strings with info for compu_methods
+#define A2LCOMPUMETHODSIZE 6
 #define A2LCOEFFNUM 6
 
 #endif // CONSTANTS_HPP

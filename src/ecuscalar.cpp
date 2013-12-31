@@ -46,3 +46,23 @@ void ECUScalar::setMinValue(double minVal) {
 void ECUScalar::setMaxValue(double maxVal) {
     m_maxVal = maxVal;
 }
+
+void ECUScalar::setReadOnly(bool ro) {
+    m_readOnly = ro;
+}
+
+void ECUScalar::setSigned(bool s) {
+    m_signed = s;
+}
+
+void ECUScalar::setDimension(const QString &dim) {
+    m_dim = dim;
+}
+
+void ECUScalar::setLength(size_t l) {
+    m_length = l;
+}
+
+void ECUScalar::setValue(double val) {
+    m_val = val;
+}

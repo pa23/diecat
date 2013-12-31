@@ -28,18 +28,51 @@ class ECUScalar {
 
 public:
     ECUScalar();
-    void setName                 (const QString &);
-    void setShortDescription     (const QString &);
-    void setAddress              (const QString &);
-    void setCoefficients         (const QVector<double> &);
-    void setMinValue             (double);
-    void setMaxValue             (double);
-    QString name                 () const { return m_name;       }
-    QString shortDescription     () const { return m_shortDescr; }
-    QString address              () const { return m_addr;       }
-    QVector<double> coefficients () const { return m_coeff;      }
-    double  minValue             () const { return m_minVal;     }
-    double  maxValue             () const { return m_maxVal;     }
+    void setName(const QString &);
+    void setShortDescription(const QString &);
+    void setAddress(const QString &);
+    void setCoefficients(const QVector<double> &);
+    void setMinValue(double);
+    void setMaxValue(double);
+    void setReadOnly(bool);
+    void setSigned(bool);
+    void setDimension(const QString &);
+    void setLength(size_t);
+    void setValue(double);
+
+    QString name() const {
+        return m_name;
+    }
+    QString shortDescription() const {
+        return m_shortDescr;
+    }
+    QString address() const {
+        return m_addr;
+    }
+    QVector<double> coefficients() const {
+        return m_coeff;
+    }
+    double minValue() const {
+        return m_minVal;
+    }
+    double maxValue() const {
+        return m_maxVal;
+    }
+    bool isReadOnly() {
+        return m_readOnly;
+    }
+    bool isSigned() {
+        return m_signed;
+    }
+    QString dimension() {
+        return m_dim;
+    }
+    size_t length() {
+        return m_length;
+    }
+    double value() {
+        return m_val;
+    }
 
 private:
     QString m_name;
@@ -48,6 +81,11 @@ private:
     QVector<double> m_coeff;
     double m_minVal = 0;
     double m_maxVal = 0;
+    bool m_readOnly = false;
+    bool m_signed = false;
+    QString m_dim;
+    size_t m_length = 0;
+    double m_val = 0;
 
 };
 
