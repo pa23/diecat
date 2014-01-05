@@ -4,7 +4,7 @@
 
     File: mainwindow.cpp
 
-    Copyright (C) 2013 Artem Petrov <pa2311@gmail.com>
+    Copyright (C) 2013-2014 Artem Petrov <pa2311@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -138,7 +138,7 @@ void MainWindow::on_action_About_triggered() {
             "<b>" + QString(PROGNAME) + " v" + QString(PROGVER) + "</b> "
             + "(Date of build: " + QString(__DATE__) + ")<br>"
             + "Diesel engines calibration tool.<br><br>"
-            "Copyright (C) 2013 Artem Petrov "
+            "Copyright (C) 2013-2014 Artem Petrov "
             "<a href=\"mailto:pa2311@gmail.com\">pa2311@gmail.com</a><br><br>"
             "Source code hosting: "
             "<a href=\"https://github.com/pa23/diecat\">https://github.com/pa23/diecat</a><br>"
@@ -179,44 +179,44 @@ void MainWindow::readProgramSettings() {
 
 void MainWindow::prepareInfoTable() {
 
-    ui->tableWidget_ValuesEditor->setRowCount(6);
+    ui->tableWidget_Description->setRowCount(6);
 
-    ui->tableWidget_ValuesEditor->setItem(0, 0, new QTableWidgetItem("Name"));
-    ui->tableWidget_ValuesEditor->setItem(0, 1, new QTableWidgetItem(""));
-    ui->tableWidget_ValuesEditor->setItem(1, 0, new QTableWidgetItem("Description"));
-    ui->tableWidget_ValuesEditor->setItem(1, 1, new QTableWidgetItem(""));
-    ui->tableWidget_ValuesEditor->setItem(2, 0, new QTableWidgetItem("Address"));
-    ui->tableWidget_ValuesEditor->setItem(2, 1, new QTableWidgetItem(""));
-    ui->tableWidget_ValuesEditor->setItem(3, 0, new QTableWidgetItem("Min value"));
-    ui->tableWidget_ValuesEditor->setItem(3, 1, new QTableWidgetItem(""));
-    ui->tableWidget_ValuesEditor->setItem(4, 0, new QTableWidgetItem("Max value"));
-    ui->tableWidget_ValuesEditor->setItem(4, 1, new QTableWidgetItem(""));
-    ui->tableWidget_ValuesEditor->setItem(5, 0, new QTableWidgetItem("Dimension"));
-    ui->tableWidget_ValuesEditor->setItem(5, 1, new QTableWidgetItem(""));
+    ui->tableWidget_Description->setItem(0, 0, new QTableWidgetItem("Name"));
+    ui->tableWidget_Description->setItem(0, 1, new QTableWidgetItem(""));
+    ui->tableWidget_Description->setItem(1, 0, new QTableWidgetItem("Description"));
+    ui->tableWidget_Description->setItem(1, 1, new QTableWidgetItem(""));
+    ui->tableWidget_Description->setItem(2, 0, new QTableWidgetItem("Address"));
+    ui->tableWidget_Description->setItem(2, 1, new QTableWidgetItem(""));
+    ui->tableWidget_Description->setItem(3, 0, new QTableWidgetItem("Min value"));
+    ui->tableWidget_Description->setItem(3, 1, new QTableWidgetItem(""));
+    ui->tableWidget_Description->setItem(4, 0, new QTableWidgetItem("Max value"));
+    ui->tableWidget_Description->setItem(4, 1, new QTableWidgetItem(""));
+    ui->tableWidget_Description->setItem(5, 0, new QTableWidgetItem("Dimension"));
+    ui->tableWidget_Description->setItem(5, 1, new QTableWidgetItem(""));
 
-    for ( ptrdiff_t i=0; i<ui->tableWidget_ValuesEditor->rowCount(); i++ ) {
+    for ( ptrdiff_t i=0; i<ui->tableWidget_Description->rowCount(); i++ ) {
 
-        for ( ptrdiff_t j=0; j<ui->tableWidget_ValuesEditor->columnCount(); j++ ) {
+        for ( ptrdiff_t j=0; j<ui->tableWidget_Description->columnCount(); j++ ) {
 
-            ui->tableWidget_ValuesEditor->item(i, j)->
-                    setFlags(ui->tableWidget_ValuesEditor->item(i, j)->flags() ^ Qt::ItemIsEditable);
+            ui->tableWidget_Description->item(i, j)->
+                    setFlags(ui->tableWidget_Description->item(i, j)->flags() ^ Qt::ItemIsEditable);
         }
     }
 
-    ui->tableWidget_ValuesEditor->resizeRowsToContents();
-    ui->tableWidget_ValuesEditor->resizeColumnsToContents();
+    ui->tableWidget_Description->resizeRowsToContents();
+    ui->tableWidget_Description->resizeColumnsToContents();
 }
 
 void MainWindow::clearInfoTable() {
 
-    ui->tableWidget_ValuesEditor->item(0, 1)->setText("");
-    ui->tableWidget_ValuesEditor->item(1, 1)->setText("");
-    ui->tableWidget_ValuesEditor->item(2, 1)->setText("");
-    ui->tableWidget_ValuesEditor->item(3, 1)->setText("");
-    ui->tableWidget_ValuesEditor->item(4, 1)->setText("");
-    ui->tableWidget_ValuesEditor->item(5, 1)->setText("");
+    ui->tableWidget_Description->item(0, 1)->setText("");
+    ui->tableWidget_Description->item(1, 1)->setText("");
+    ui->tableWidget_Description->item(2, 1)->setText("");
+    ui->tableWidget_Description->item(3, 1)->setText("");
+    ui->tableWidget_Description->item(4, 1)->setText("");
+    ui->tableWidget_Description->item(5, 1)->setText("");
 
-    ui->tableWidget_ValuesEditor->resizeColumnsToContents();
+    ui->tableWidget_Description->resizeColumnsToContents();
 }
 
 void MainWindow::readA2LInfo(const QString &filepath) {
@@ -230,6 +230,8 @@ void MainWindow::readA2LInfo(const QString &filepath) {
     }
 
     a2l->fillScalarsInfo(m_scalars);
+
+    a2l->clear();
 }
 
 void MainWindow::showData() {
@@ -241,12 +243,16 @@ void MainWindow::showData() {
 
 void MainWindow::itemChanged(int currItemInd) {
 
-    ui->tableWidget_ValuesEditor->item(0, 1)->setText(m_scalars[currItemInd]->name());
-    ui->tableWidget_ValuesEditor->item(1, 1)->setText(m_scalars[currItemInd]->shortDescription());
-    ui->tableWidget_ValuesEditor->item(2, 1)->setText(m_scalars[currItemInd]->address());
-    ui->tableWidget_ValuesEditor->item(3, 1)->setText(QString::number(m_scalars[currItemInd]->minValue()));
-    ui->tableWidget_ValuesEditor->item(4, 1)->setText(QString::number(m_scalars[currItemInd]->maxValue()));
-    ui->tableWidget_ValuesEditor->item(5, 1)->setText(m_scalars[currItemInd]->dimension());
+    if ( ui->listWidget_Labels->item(currItemInd) == nullptr ) {
+        return;
+    }
 
-    ui->tableWidget_ValuesEditor->resizeColumnsToContents();
+    ui->tableWidget_Description->item(0, 1)->setText(m_scalars[currItemInd]->name());
+    ui->tableWidget_Description->item(1, 1)->setText(m_scalars[currItemInd]->shortDescription());
+    ui->tableWidget_Description->item(2, 1)->setText(m_scalars[currItemInd]->address());
+    ui->tableWidget_Description->item(3, 1)->setText(QString::number(m_scalars[currItemInd]->minValue()));
+    ui->tableWidget_Description->item(4, 1)->setText(QString::number(m_scalars[currItemInd]->maxValue()));
+    ui->tableWidget_Description->item(5, 1)->setText(m_scalars[currItemInd]->dimension());
+
+    ui->tableWidget_Description->resizeColumnsToContents();
 }
