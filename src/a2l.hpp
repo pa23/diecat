@@ -47,6 +47,7 @@ private:
     QVector<double> getHardLimints(const QString &) const;
     bool isReadOnly(ptrdiff_t) const;
     bool isSigned(const QString &) const;
+    ptrdiff_t getLength(const QString &) const;
 
 };
 

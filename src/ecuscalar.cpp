@@ -63,11 +63,15 @@ void ECUScalar::setSigned(bool s) {
     m_signed = s;
 }
 
+void ECUScalar::setPrecision(ptrdiff_t prec) {
+    m_prec = prec;
+}
+
 void ECUScalar::setDimension(const QString &dim) {
     m_dim = dim;
 }
 
-void ECUScalar::setLength(size_t l) {
+void ECUScalar::setLength(ptrdiff_t l) {
     m_length = l;
 }
 

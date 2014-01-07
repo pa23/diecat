@@ -127,8 +127,9 @@ void A2L::fillScalarsInfo(QVector< QSharedPointer<ECUScalar> > &scalars) const {
 
         scal->setReadOnly(isReadOnly(i));
         scal->setSigned(isSigned(m_scalarsInfo[i][4]));
+        scal->setLength(getLength(m_scalarsInfo[i][4]));
+        scal->setPrecision(m_scalarsInfo[i][9].split('.').last().split('"').first().toInt());
         scal->setDimension(m_compumethodsInfo[compuMethodInd][4]);
-        //scal->setLength...
 
         scalars.push_back(scal);
     }
@@ -211,4 +212,16 @@ bool A2L::isSigned(const QString &str) const {
     }
 
     return false;
+}
+
+ptrdiff_t A2L::getLength(const QString &str) const {
+
+    if ( str.size() == 6 ) {
+        return str.right(1).toInt() / 8;
+    }
+    else if ( str.size() == 7 ) {
+        return str.right(2).toInt() / 8;
+    }
+
+    return 0;
 }

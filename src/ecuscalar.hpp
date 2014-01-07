@@ -38,8 +38,9 @@ public:
     void setMaxValueHard(double);
     void setReadOnly(bool);
     void setSigned(bool);
+    void setPrecision(ptrdiff_t);
     void setDimension(const QString &);
-    void setLength(size_t);
+    void setLength(ptrdiff_t);
     void setValue(double);
 
     QString name() const {
@@ -66,19 +67,22 @@ public:
     double maxValueHard() const {
         return m_maxValHard;
     }
-    bool isReadOnly() {
+    bool isReadOnly() const {
         return m_readOnly;
     }
-    bool isSigned() {
+    bool isSigned() const {
         return m_signed;
     }
-    QString dimension() {
+    ptrdiff_t precision() const {
+        return m_prec;
+    }
+    QString dimension() const {
         return m_dim;
     }
-    size_t length() {
+    size_t length() const {
         return m_length;
     }
-    double value() {
+    double value() const {
         return m_val;
     }
 
@@ -93,8 +97,9 @@ private:
     double m_maxValHard = 0;
     bool m_readOnly = false;
     bool m_signed = false;
+    ptrdiff_t m_prec = 6;
     QString m_dim;
-    size_t m_length = 0;
+    ptrdiff_t m_length = 0;
     double m_val = 0;
 
 };

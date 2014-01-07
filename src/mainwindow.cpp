@@ -179,7 +179,7 @@ void MainWindow::readProgramSettings() {
 
 void MainWindow::prepareInfoTable() {
 
-    ui->tableWidget_Description->setRowCount(10);
+    ui->tableWidget_Description->setRowCount(11);
 
     ui->tableWidget_Description->setItem(0, 0, new QTableWidgetItem("Name"));
     ui->tableWidget_Description->setItem(0, 1, new QTableWidgetItem(""));
@@ -187,20 +187,22 @@ void MainWindow::prepareInfoTable() {
     ui->tableWidget_Description->setItem(1, 1, new QTableWidgetItem(""));
     ui->tableWidget_Description->setItem(2, 0, new QTableWidgetItem("Address"));
     ui->tableWidget_Description->setItem(2, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(3, 0, new QTableWidgetItem("Min value (soft)"));
+    ui->tableWidget_Description->setItem(3, 0, new QTableWidgetItem("Length, bytes"));
     ui->tableWidget_Description->setItem(3, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(4, 0, new QTableWidgetItem("Max value (soft)"));
+    ui->tableWidget_Description->setItem(4, 0, new QTableWidgetItem("Min value (soft)"));
     ui->tableWidget_Description->setItem(4, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(5, 0, new QTableWidgetItem("Min value (hard)"));
+    ui->tableWidget_Description->setItem(5, 0, new QTableWidgetItem("Max value (soft)"));
     ui->tableWidget_Description->setItem(5, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(6, 0, new QTableWidgetItem("Max value (hard)"));
+    ui->tableWidget_Description->setItem(6, 0, new QTableWidgetItem("Min value (hard)"));
     ui->tableWidget_Description->setItem(6, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(7, 0, new QTableWidgetItem("Read only"));
+    ui->tableWidget_Description->setItem(7, 0, new QTableWidgetItem("Max value (hard)"));
     ui->tableWidget_Description->setItem(7, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(8, 0, new QTableWidgetItem("Signed"));
+    ui->tableWidget_Description->setItem(8, 0, new QTableWidgetItem("Read only"));
     ui->tableWidget_Description->setItem(8, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(9, 0, new QTableWidgetItem("Dimension"));
+    ui->tableWidget_Description->setItem(9, 0, new QTableWidgetItem("Signed"));
     ui->tableWidget_Description->setItem(9, 1, new QTableWidgetItem(""));
+    ui->tableWidget_Description->setItem(10, 0, new QTableWidgetItem("Dimension"));
+    ui->tableWidget_Description->setItem(10, 1, new QTableWidgetItem(""));
 
     for ( ptrdiff_t i=0; i<ui->tableWidget_Description->rowCount(); i++ ) {
 
@@ -255,26 +257,27 @@ void MainWindow::itemChanged(int currItemInd) {
     ui->tableWidget_Description->item(0, 1)->setText(m_scalars[currItemInd]->name());
     ui->tableWidget_Description->item(1, 1)->setText(m_scalars[currItemInd]->shortDescription());
     ui->tableWidget_Description->item(2, 1)->setText(m_scalars[currItemInd]->address());
-    ui->tableWidget_Description->item(3, 1)->setText(QString::number(m_scalars[currItemInd]->minValueSoft()));
-    ui->tableWidget_Description->item(4, 1)->setText(QString::number(m_scalars[currItemInd]->maxValueSoft()));
-    ui->tableWidget_Description->item(5, 1)->setText(QString::number(m_scalars[currItemInd]->minValueHard()));
-    ui->tableWidget_Description->item(6, 1)->setText(QString::number(m_scalars[currItemInd]->maxValueHard()));
+    ui->tableWidget_Description->item(3, 1)->setText(QString::number(m_scalars[currItemInd]->length()));
+    ui->tableWidget_Description->item(4, 1)->setText(QString::number(m_scalars[currItemInd]->minValueSoft(), 'f', m_scalars[currItemInd]->precision()));
+    ui->tableWidget_Description->item(5, 1)->setText(QString::number(m_scalars[currItemInd]->maxValueSoft(), 'f', m_scalars[currItemInd]->precision()));
+    ui->tableWidget_Description->item(6, 1)->setText(QString::number(m_scalars[currItemInd]->minValueHard(), 'f', m_scalars[currItemInd]->precision()));
+    ui->tableWidget_Description->item(7, 1)->setText(QString::number(m_scalars[currItemInd]->maxValueHard(), 'f', m_scalars[currItemInd]->precision()));
 
     if ( m_scalars[currItemInd]->isReadOnly() ) {
-        ui->tableWidget_Description->item(7, 1)->setText("true");
-    }
-    else {
-        ui->tableWidget_Description->item(7, 1)->setText("false");
-    }
-
-    if ( m_scalars[currItemInd]->isSigned() ) {
         ui->tableWidget_Description->item(8, 1)->setText("true");
     }
     else {
         ui->tableWidget_Description->item(8, 1)->setText("false");
     }
 
-    ui->tableWidget_Description->item(9, 1)->setText(m_scalars[currItemInd]->dimension());
+    if ( m_scalars[currItemInd]->isSigned() ) {
+        ui->tableWidget_Description->item(9, 1)->setText("true");
+    }
+    else {
+        ui->tableWidget_Description->item(9, 1)->setText("false");
+    }
+
+    ui->tableWidget_Description->item(10, 1)->setText(m_scalars[currItemInd]->dimension());
 
     ui->tableWidget_Description->resizeColumnsToContents();
 }
