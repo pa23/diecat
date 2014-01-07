@@ -179,7 +179,7 @@ void MainWindow::readProgramSettings() {
 
 void MainWindow::prepareInfoTable() {
 
-    ui->tableWidget_Description->setRowCount(6);
+    ui->tableWidget_Description->setRowCount(7);
 
     ui->tableWidget_Description->setItem(0, 0, new QTableWidgetItem("Name"));
     ui->tableWidget_Description->setItem(0, 1, new QTableWidgetItem(""));
@@ -191,8 +191,10 @@ void MainWindow::prepareInfoTable() {
     ui->tableWidget_Description->setItem(3, 1, new QTableWidgetItem(""));
     ui->tableWidget_Description->setItem(4, 0, new QTableWidgetItem("Max value"));
     ui->tableWidget_Description->setItem(4, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(5, 0, new QTableWidgetItem("Dimension"));
+    ui->tableWidget_Description->setItem(5, 0, new QTableWidgetItem("Read only"));
     ui->tableWidget_Description->setItem(5, 1, new QTableWidgetItem(""));
+    ui->tableWidget_Description->setItem(6, 0, new QTableWidgetItem("Dimension"));
+    ui->tableWidget_Description->setItem(6, 1, new QTableWidgetItem(""));
 
     for ( ptrdiff_t i=0; i<ui->tableWidget_Description->rowCount(); i++ ) {
 
@@ -209,12 +211,9 @@ void MainWindow::prepareInfoTable() {
 
 void MainWindow::clearInfoTable() {
 
-    ui->tableWidget_Description->item(0, 1)->setText("");
-    ui->tableWidget_Description->item(1, 1)->setText("");
-    ui->tableWidget_Description->item(2, 1)->setText("");
-    ui->tableWidget_Description->item(3, 1)->setText("");
-    ui->tableWidget_Description->item(4, 1)->setText("");
-    ui->tableWidget_Description->item(5, 1)->setText("");
+    for ( ptrdiff_t i=0; i<ui->tableWidget_Description->rowCount(); i++ ) {
+        ui->tableWidget_Description->item(i, 1)->setText("");
+    }
 
     ui->tableWidget_Description->resizeColumnsToContents();
 }
@@ -252,7 +251,15 @@ void MainWindow::itemChanged(int currItemInd) {
     ui->tableWidget_Description->item(2, 1)->setText(m_scalars[currItemInd]->address());
     ui->tableWidget_Description->item(3, 1)->setText(QString::number(m_scalars[currItemInd]->minValue()));
     ui->tableWidget_Description->item(4, 1)->setText(QString::number(m_scalars[currItemInd]->maxValue()));
-    ui->tableWidget_Description->item(5, 1)->setText(m_scalars[currItemInd]->dimension());
+
+    if ( m_scalars[currItemInd]->isReadOnly() ) {
+        ui->tableWidget_Description->item(5, 1)->setText("true");
+    }
+    else {
+        ui->tableWidget_Description->item(5, 1)->setText("false");
+    }
+
+    ui->tableWidget_Description->item(6, 1)->setText(m_scalars[currItemInd]->dimension());
 
     ui->tableWidget_Description->resizeColumnsToContents();
 }

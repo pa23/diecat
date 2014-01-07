@@ -20,20 +20,20 @@
 
 QT += core gui widgets printsupport
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
 TARGET = diecat
 TEMPLATE = app
 
 SOURCES += src/main.cpp \
     src/mainwindow.cpp \
     src/a2l.cpp \
-    src/ecuscalar.cpp
+    src/ecuscalar.cpp \
+    src/intelhex.cpp
 
 HEADERS += src/mainwindow.hpp \
     src/constants.hpp \
     src/a2l.hpp \
-    src/ecuscalar.hpp
+    src/ecuscalar.hpp \
+    src/intelhex.hpp
 
 FORMS += forms/mainwindow.ui
 
