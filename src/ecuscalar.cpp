@@ -39,12 +39,20 @@ void ECUScalar::setCoefficients(const QVector<double> &coeff) {
     m_coeff = coeff;
 }
 
-void ECUScalar::setMinValue(double minVal) {
-    m_minVal = minVal;
+void ECUScalar::setMinValueSoft(double minValSoft) {
+    m_minValSoft = minValSoft;
 }
 
-void ECUScalar::setMaxValue(double maxVal) {
-    m_maxVal = maxVal;
+void ECUScalar::setMaxValueSoft(double maxValSoft) {
+    m_maxValSoft = maxValSoft;
+}
+
+void ECUScalar::setMinValueHard(double minValHard) {
+    m_minValHard = minValHard;
+}
+
+void ECUScalar::setMaxValueHard(double maxValHard) {
+    m_maxValHard = maxValHard;
 }
 
 void ECUScalar::setReadOnly(bool ro) {

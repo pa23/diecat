@@ -118,8 +118,13 @@ void A2L::fillScalarsInfo(QVector< QSharedPointer<ECUScalar> > &scalars) const {
         scal->setShortDescription(m_scalarsInfo[i][1]);
         scal->setAddress(m_scalarsInfo[i][3].split("x").last());
         scal->setCoefficients(getCoeff(compuMethodInd));
-        scal->setMinValue(m_scalarsInfo[i][7].toDouble());
-        scal->setMaxValue(m_scalarsInfo[i][8].toDouble());
+        scal->setMinValueSoft(m_scalarsInfo[i][7].toDouble());
+        scal->setMaxValueSoft(m_scalarsInfo[i][8].toDouble());
+
+        QVector<double> v = getHardLimints(m_scalarsInfo[i][10]);
+        scal->setMinValueHard(v[0]);
+        scal->setMaxValueHard(v[1]);
+
         scal->setReadOnly(isReadOnly(i));
         scal->setSigned(isSigned(m_scalarsInfo[i][4]));
         scal->setDimension(m_compumethodsInfo[compuMethodInd][4]);
@@ -158,6 +163,22 @@ QVector<double> A2L::getCoeff(ptrdiff_t ind) const {
     QStringList strlst = m_compumethodsInfo[ind][5].split(" ");
 
     if ( strlst.size() != (A2LCOEFFNUM + 1) ) {
+        return v;
+    }
+
+    for ( ptrdiff_t i=1; i<strlst.size(); i++ ) {
+        v[i-1] = strlst[i].toDouble();
+    }
+
+    return v;
+}
+
+QVector<double> A2L::getHardLimints(const QString &str) const {
+
+    QVector<double> v(2);
+    QStringList strlst = str.split(" ");
+
+    if ( strlst.size() != 3 ) {
         return v;
     }
 

@@ -32,8 +32,10 @@ public:
     void setShortDescription(const QString &);
     void setAddress(const QString &);
     void setCoefficients(const QVector<double> &);
-    void setMinValue(double);
-    void setMaxValue(double);
+    void setMinValueSoft(double);
+    void setMaxValueSoft(double);
+    void setMinValueHard(double);
+    void setMaxValueHard(double);
     void setReadOnly(bool);
     void setSigned(bool);
     void setDimension(const QString &);
@@ -52,11 +54,17 @@ public:
     QVector<double> coefficients() const {
         return m_coeff;
     }
-    double minValue() const {
-        return m_minVal;
+    double minValueSoft() const {
+        return m_minValSoft;
     }
-    double maxValue() const {
-        return m_maxVal;
+    double maxValueSoft() const {
+        return m_maxValSoft;
+    }
+    double minValueHard() const {
+        return m_minValHard;
+    }
+    double maxValueHard() const {
+        return m_maxValHard;
     }
     bool isReadOnly() {
         return m_readOnly;
@@ -79,8 +87,10 @@ private:
     QString m_shortDescr;
     QString m_addr;
     QVector<double> m_coeff;
-    double m_minVal = 0;
-    double m_maxVal = 0;
+    double m_minValSoft = 0;
+    double m_maxValSoft = 0;
+    double m_minValHard = 0;
+    double m_maxValHard = 0;
     bool m_readOnly = false;
     bool m_signed = false;
     QString m_dim;
