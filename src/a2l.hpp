@@ -45,6 +45,7 @@ private:
     ptrdiff_t findCompuMethod(const QString &) const;
     QVector<double> getCoeff(ptrdiff_t) const;
     bool isReadOnly(ptrdiff_t) const;
+    bool isSigned(const QString &) const;
 
 };
 

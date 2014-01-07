@@ -179,7 +179,7 @@ void MainWindow::readProgramSettings() {
 
 void MainWindow::prepareInfoTable() {
 
-    ui->tableWidget_Description->setRowCount(7);
+    ui->tableWidget_Description->setRowCount(8);
 
     ui->tableWidget_Description->setItem(0, 0, new QTableWidgetItem("Name"));
     ui->tableWidget_Description->setItem(0, 1, new QTableWidgetItem(""));
@@ -193,8 +193,10 @@ void MainWindow::prepareInfoTable() {
     ui->tableWidget_Description->setItem(4, 1, new QTableWidgetItem(""));
     ui->tableWidget_Description->setItem(5, 0, new QTableWidgetItem("Read only"));
     ui->tableWidget_Description->setItem(5, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(6, 0, new QTableWidgetItem("Dimension"));
+    ui->tableWidget_Description->setItem(6, 0, new QTableWidgetItem("Signed"));
     ui->tableWidget_Description->setItem(6, 1, new QTableWidgetItem(""));
+    ui->tableWidget_Description->setItem(7, 0, new QTableWidgetItem("Dimension"));
+    ui->tableWidget_Description->setItem(7, 1, new QTableWidgetItem(""));
 
     for ( ptrdiff_t i=0; i<ui->tableWidget_Description->rowCount(); i++ ) {
 
@@ -259,7 +261,14 @@ void MainWindow::itemChanged(int currItemInd) {
         ui->tableWidget_Description->item(5, 1)->setText("false");
     }
 
-    ui->tableWidget_Description->item(6, 1)->setText(m_scalars[currItemInd]->dimension());
+    if ( m_scalars[currItemInd]->isSigned() ) {
+        ui->tableWidget_Description->item(6, 1)->setText("true");
+    }
+    else {
+        ui->tableWidget_Description->item(6, 1)->setText("false");
+    }
+
+    ui->tableWidget_Description->item(7, 1)->setText(m_scalars[currItemInd]->dimension());
 
     ui->tableWidget_Description->resizeColumnsToContents();
 }

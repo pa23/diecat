@@ -121,7 +121,7 @@ void A2L::fillScalarsInfo(QVector< QSharedPointer<ECUScalar> > &scalars) const {
         scal->setMinValue(m_scalarsInfo[i][7].toDouble());
         scal->setMaxValue(m_scalarsInfo[i][8].toDouble());
         scal->setReadOnly(isReadOnly(i));
-        //scal->setSigned...
+        scal->setSigned(isSigned(m_scalarsInfo[i][4]));
         scal->setDimension(m_compumethodsInfo[compuMethodInd][4]);
         //scal->setLength...
 
@@ -173,6 +173,18 @@ bool A2L::isReadOnly(ptrdiff_t ind) const {
     for ( ptrdiff_t i=0; i<m_scalarsInfo[ind].size(); i++ ) {
 
         if ( m_scalarsInfo[ind][i] == "READ_ONLY" ) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool A2L::isSigned(const QString &str) const {
+
+    if ( str.size() >= 6 ) {
+
+        if ( str.mid(4, 1) == "s" ) {
             return true;
         }
     }
