@@ -107,6 +107,35 @@ void MainWindow::on_action_OpenProject_triggered() {
     showData();
 }
 
+void MainWindow::on_action_OpenA2L_triggered() {
+
+    const QString a2lFileName(
+                QFileDialog::getOpenFileName(
+                    this,
+                    tr("Open a2l file..."),
+                    m_lastA2LPath,
+                    QString::fromLatin1("a2l files (*.a2l);;All files (*)"),
+                    0, 0)
+                );
+
+    if ( a2lFileName.isEmpty() ) {
+        return;
+    }
+
+    QFileInfo a2lFileInfo(a2lFileName);
+    m_lastA2LPath = a2lFileInfo.absolutePath();
+
+    //
+
+    ui->lineEdit_QuickSearch->clear();
+    ui->listWidget_Labels->clear();
+    clearInfoTable();
+    m_scalars.clear();
+
+    readA2LInfo(a2lFileName);
+    showData();
+}
+
 void MainWindow::on_action_SaveChangesInHex_triggered() {
 
     //

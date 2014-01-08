@@ -42,6 +42,7 @@ public:
 
 private slots:
     void on_action_OpenProject_triggered();
+    void on_action_OpenA2L_triggered();
     void on_action_SaveChangesInHex_triggered();
     void on_action_Undo_triggered();
     void on_action_Redo_triggered();

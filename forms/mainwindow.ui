@@ -136,7 +136,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -144,6 +144,7 @@
      <string>File</string>
     </property>
     <addaction name="action_OpenProject"/>
+    <addaction name="action_OpenA2L"/>
     <addaction name="action_SaveChangesInHex"/>
     <addaction name="separator"/>
     <addaction name="action_Quit"/>
@@ -236,6 +237,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="action_OpenA2L">
+   <property name="text">
+    <string>Open a2l file w/o hex...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+O</string>
    </property>
   </action>
  </widget>
