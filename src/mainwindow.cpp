@@ -23,6 +23,7 @@
 #include "constants.hpp"
 #include "a2l.hpp"
 #include "ecuscalar.hpp"
+#include "intelhex.hpp"
 
 #include <QMessageBox>
 #include <QFileDialog>
@@ -77,7 +78,7 @@ void MainWindow::on_action_OpenProject_triggered() {
         return;
     }
 
-    QFileInfo a2lFileInfo(a2lFileName);
+    const QFileInfo a2lFileInfo(a2lFileName);
     m_lastA2LPath = a2lFileInfo.absolutePath();
 
     const QString hexFileName(
@@ -93,7 +94,7 @@ void MainWindow::on_action_OpenProject_triggered() {
         return;
     }
 
-    QFileInfo hexFileInfo(hexFileName);
+    const QFileInfo hexFileInfo(hexFileName);
     m_lastHEXPath = hexFileInfo.absolutePath();
 
     //
@@ -104,6 +105,7 @@ void MainWindow::on_action_OpenProject_triggered() {
     m_scalars.clear();
 
     readA2LInfo(a2lFileName);
+    readHEXData(hexFileName);
     showData();
 }
 
@@ -122,7 +124,7 @@ void MainWindow::on_action_OpenA2L_triggered() {
         return;
     }
 
-    QFileInfo a2lFileInfo(a2lFileName);
+    const QFileInfo a2lFileInfo(a2lFileName);
     m_lastA2LPath = a2lFileInfo.absolutePath();
 
     //
@@ -208,7 +210,8 @@ void MainWindow::readProgramSettings() {
 
 void MainWindow::prepareInfoTable() {
 
-    ui->tableWidget_Description->setRowCount(11);
+    //ui->tableWidget_Description->setRowCount(11);
+    ui->tableWidget_Description->setRowCount(12);                                            ////////////////////////////////////////
 
     ui->tableWidget_Description->setItem(0, 0, new QTableWidgetItem("Name"));
     ui->tableWidget_Description->setItem(0, 1, new QTableWidgetItem(""));
@@ -232,6 +235,9 @@ void MainWindow::prepareInfoTable() {
     ui->tableWidget_Description->setItem(9, 1, new QTableWidgetItem(""));
     ui->tableWidget_Description->setItem(10, 0, new QTableWidgetItem("Dimension"));
     ui->tableWidget_Description->setItem(10, 1, new QTableWidgetItem(""));
+
+    ui->tableWidget_Description->setItem(11, 0, new QTableWidgetItem("Value"));                ///////////////////////////////////
+    ui->tableWidget_Description->setItem(11, 1, new QTableWidgetItem(""));
 
     for ( ptrdiff_t i=0; i<ui->tableWidget_Description->rowCount(); i++ ) {
 
@@ -266,8 +272,18 @@ void MainWindow::readA2LInfo(const QString &filepath) {
     }
 
     a2l->fillScalarsInfo(m_scalars);
-
     a2l->clear();
+}
+
+void MainWindow::readHEXData(const QString &filepath) {
+
+    QSharedPointer<IntelHEX> ihex(new IntelHEX(filepath));
+
+    if ( !ihex->readValues(m_scalars) ) {
+        QMessageBox::critical(this, QString(PROGNAME) + ": error", "Error occured during hex file reading!");
+    }
+
+    ihex.clear();
 }
 
 void MainWindow::showData() {
@@ -307,6 +323,9 @@ void MainWindow::itemChanged(int currItemInd) {
     }
 
     ui->tableWidget_Description->item(10, 1)->setText(m_scalars[currItemInd]->dimension());
+
+    /////////////////////////////
+    ui->tableWidget_Description->item(11, 1)->setText(QString::number(m_scalars[currItemInd]->value(), 'f', m_scalars[currItemInd]->precision()));        ////////////////////////////////
 
     ui->tableWidget_Description->resizeColumnsToContents();
 }

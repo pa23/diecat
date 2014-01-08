@@ -34,6 +34,7 @@ class IntelHEX {
 public:
     IntelHEX(const QString &);
     bool readValues(QVector< QSharedPointer<ECUScalar> > &);
+    void clear();
 
 private:
     QString m_hexpath;
@@ -42,6 +43,8 @@ private:
 
     bool readHex();
     QString checksum(const QString &) const;
+    bool readScalars(QVector< QSharedPointer<ECUScalar> > &) const;
+    void writeScalarValue(QString &, QSharedPointer<ECUScalar> &) const;
 
 };
 

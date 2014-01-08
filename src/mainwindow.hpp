@@ -66,6 +66,7 @@ private:
     void clearInfoTable();
 
     void readA2LInfo(const QString &);
+    void readHEXData(const QString &);
     void showData();
 
 };

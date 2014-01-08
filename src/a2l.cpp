@@ -112,7 +112,7 @@ void A2L::fillScalarsInfo(QVector< QSharedPointer<ECUScalar> > &scalars) const {
 
         QSharedPointer<ECUScalar> scal(new ECUScalar());
 
-        ptrdiff_t compuMethodInd = findCompuMethod(m_scalarsInfo[i][6]);
+        const ptrdiff_t compuMethodInd = findCompuMethod(m_scalarsInfo[i][6]);
 
         scal->setName(m_scalarsInfo[i][0]);
         scal->setShortDescription(m_scalarsInfo[i][1]);
@@ -161,7 +161,7 @@ QVector<double> A2L::getCoeff(ptrdiff_t ind) const {
         return v;
     }
 
-    QStringList strlst = m_compumethodsInfo[ind][5].split(" ");
+    const QStringList strlst = m_compumethodsInfo[ind][5].split(" ");
 
     if ( strlst.size() != (A2LCOEFFNUM + 1) ) {
         return v;
@@ -177,7 +177,7 @@ QVector<double> A2L::getCoeff(ptrdiff_t ind) const {
 QVector<double> A2L::getHardLimints(const QString &str) const {
 
     QVector<double> v(2);
-    QStringList strlst = str.split(" ");
+    const QStringList strlst = str.split(" ");
 
     if ( strlst.size() != 3 ) {
         return v;
@@ -216,7 +216,7 @@ bool A2L::isSigned(const QString &str) const {
 
 ptrdiff_t A2L::getLength(const QString &str) const {
 
-    QString pstr = str.split('_').last();
+    const QString pstr = str.split('_').last();
 
     if ( pstr.size() == 3 ) {
         return pstr.right(1).toInt() / 8;
