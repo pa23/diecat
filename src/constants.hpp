@@ -24,6 +24,7 @@
 #define PROGNAME "diecat"
 #define PROGVER  "0.1.0 DEV"
 
+#define A2LCHARBLOCKMINSIZE 9
 #define A2LCOMPUMETHODSIZE 6
 #define A2LCOEFFNUM 6
 

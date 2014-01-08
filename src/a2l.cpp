@@ -67,7 +67,7 @@ bool A2L::readFile() {
                 strlst.push_back(str);
             }
 
-            if ( strlst.size() > 12 ) {
+            if ( strlst.size() > A2LCHARBLOCKMINSIZE-1 ) {
 
                 if ( regexp_C.exactMatch(strlst[0]) && (strlst[2] == "VALUE") ){
                     m_scalarsInfo.push_back(strlst);
@@ -216,11 +216,13 @@ bool A2L::isSigned(const QString &str) const {
 
 ptrdiff_t A2L::getLength(const QString &str) const {
 
-    if ( str.size() == 6 ) {
-        return str.right(1).toInt() / 8;
+    QString pstr = str.split('_').last();
+
+    if ( pstr.size() == 3 ) {
+        return pstr.right(1).toInt() / 8;
     }
-    else if ( str.size() == 7 ) {
-        return str.right(2).toInt() / 8;
+    else if ( pstr.size() == 4 ) {
+        return pstr.right(2).toInt() / 8;
     }
 
     return 0;
