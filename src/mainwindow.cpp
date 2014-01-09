@@ -101,12 +101,12 @@ void MainWindow::on_action_OpenProject_triggered() {
 
     ui->lineEdit_QuickSearch->clear();
     ui->listWidget_Labels->clear();
-    clearInfoTable();
+    clearTables();
     m_scalars.clear();
 
     readA2LInfo(a2lFileName);
     readHEXData(hexFileName);
-    showData();
+    showLabels();
 }
 
 void MainWindow::on_action_OpenA2L_triggered() {
@@ -131,11 +131,11 @@ void MainWindow::on_action_OpenA2L_triggered() {
 
     ui->lineEdit_QuickSearch->clear();
     ui->listWidget_Labels->clear();
-    clearInfoTable();
+    clearTables();
     m_scalars.clear();
 
     readA2LInfo(a2lFileName);
-    showData();
+    showLabels();
 }
 
 void MainWindow::on_action_SaveChangesInHex_triggered() {
@@ -210,8 +210,7 @@ void MainWindow::readProgramSettings() {
 
 void MainWindow::prepareInfoTable() {
 
-    //ui->tableWidget_Description->setRowCount(11);
-    ui->tableWidget_Description->setRowCount(12);                                            ////////////////////////////////////////
+    ui->tableWidget_Description->setRowCount(11);
 
     ui->tableWidget_Description->setItem(0, 0, new QTableWidgetItem("Name"));
     ui->tableWidget_Description->setItem(0, 1, new QTableWidgetItem(""));
@@ -236,9 +235,6 @@ void MainWindow::prepareInfoTable() {
     ui->tableWidget_Description->setItem(10, 0, new QTableWidgetItem("Dimension"));
     ui->tableWidget_Description->setItem(10, 1, new QTableWidgetItem(""));
 
-    ui->tableWidget_Description->setItem(11, 0, new QTableWidgetItem("Value"));                ///////////////////////////////////
-    ui->tableWidget_Description->setItem(11, 1, new QTableWidgetItem(""));
-
     for ( ptrdiff_t i=0; i<ui->tableWidget_Description->rowCount(); i++ ) {
 
         for ( ptrdiff_t j=0; j<ui->tableWidget_Description->columnCount(); j++ ) {
@@ -252,13 +248,35 @@ void MainWindow::prepareInfoTable() {
     ui->tableWidget_Description->resizeColumnsToContents();
 }
 
-void MainWindow::clearInfoTable() {
+void MainWindow::prepareValuesTable(ptrdiff_t vartype) {
+
+    if ( vartype == VARTYPE_SCALAR_NUM ) {
+
+        ui->tableWidget_Values->setRowCount(1);
+        ui->tableWidget_Values->setItem(0, 0, new QTableWidgetItem("Value"));
+        ui->tableWidget_Values->item(0, 0)->
+                setFlags(ui->tableWidget_Values->item(0, 0)->flags() ^ Qt::ItemIsEditable);
+        ui->tableWidget_Values->setItem(0, 1, new QTableWidgetItem(""));
+    }
+    else if ( vartype == VARTYPE_SCALAR_TXT ) {
+
+        //
+    }
+
+    ui->tableWidget_Values->resizeRowsToContents();
+}
+
+void MainWindow::clearTables() {
 
     for ( ptrdiff_t i=0; i<ui->tableWidget_Description->rowCount(); i++ ) {
         ui->tableWidget_Description->item(i, 1)->setText("");
     }
 
     ui->tableWidget_Description->resizeColumnsToContents();
+
+    //
+
+    ui->tableWidget_Values->setRowCount(0);
 }
 
 void MainWindow::readA2LInfo(const QString &filepath) {
@@ -286,18 +304,14 @@ void MainWindow::readHEXData(const QString &filepath) {
     ihex.clear();
 }
 
-void MainWindow::showData() {
+void MainWindow::showLabels() {
 
     for ( ptrdiff_t i=0; i<m_scalars.size(); i++ ) {
         ui->listWidget_Labels->addItem(m_scalars[i]->name());
     }
 }
 
-void MainWindow::itemChanged(int currItemInd) {
-
-    if ( ui->listWidget_Labels->item(currItemInd) == nullptr ) {
-        return;
-    }
+void MainWindow::showA2LInfo(int currItemInd) {
 
     ui->tableWidget_Description->item(0, 1)->setText(m_scalars[currItemInd]->name());
     ui->tableWidget_Description->item(1, 1)->setText(m_scalars[currItemInd]->shortDescription());
@@ -324,8 +338,30 @@ void MainWindow::itemChanged(int currItemInd) {
 
     ui->tableWidget_Description->item(10, 1)->setText(m_scalars[currItemInd]->dimension());
 
-    /////////////////////////////
-    ui->tableWidget_Description->item(11, 1)->setText(QString::number(m_scalars[currItemInd]->value(), 'f', m_scalars[currItemInd]->precision()));        ////////////////////////////////
-
     ui->tableWidget_Description->resizeColumnsToContents();
+}
+
+void MainWindow::showHEXValue(int currItemInd, ptrdiff_t vartype) {
+
+    if ( vartype == VARTYPE_SCALAR_NUM ) {
+        ui->tableWidget_Values->item(0, 1)->setText(QString::number(m_scalars[currItemInd]->value(), 'f', m_scalars[currItemInd]->precision()));
+    }
+    else if ( vartype == VARTYPE_SCALAR_TXT ) {
+
+        //
+    }
+
+    ui->tableWidget_Values->resizeColumnsToContents();
+}
+
+void MainWindow::itemChanged(int currItemInd) {
+
+    if ( ui->listWidget_Labels->item(currItemInd) == nullptr ) {
+        return;
+    }
+
+    showA2LInfo(currItemInd);
+
+    prepareValuesTable(VARTYPE_SCALAR_NUM);
+    showHEXValue(currItemInd, VARTYPE_SCALAR_NUM);
 }

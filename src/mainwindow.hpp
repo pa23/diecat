@@ -63,11 +63,14 @@ private:
     void readProgramSettings();
 
     void prepareInfoTable();
-    void clearInfoTable();
+    void prepareValuesTable(ptrdiff_t);
+    void clearTables();
 
     void readA2LInfo(const QString &);
     void readHEXData(const QString &);
-    void showData();
+    void showLabels();
+    void showA2LInfo(int);
+    void showHEXValue(int, ptrdiff_t);
 
 };
 
