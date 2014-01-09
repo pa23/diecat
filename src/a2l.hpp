@@ -40,14 +40,17 @@ private:
     QString m_a2lpath;
     QVector<QStringList> m_scalarsInfo;
     QVector<QStringList> m_compumethodsInfo;
+    QVector<QStringList> m_compuvtabsInfo;
 
     bool isScalar(const QStringList &) const;
     ptrdiff_t findCompuMethod(const QString &) const;
+    ptrdiff_t findCompuVTab(const QString &) const;
     QVector<double> getCoeff(ptrdiff_t) const;
     QVector<double> getHardLimints(const QString &) const;
     bool isReadOnly(ptrdiff_t) const;
     bool isSigned(const QString &) const;
     ptrdiff_t getLength(const QString &) const;
+    QStringList getVTab(ptrdiff_t) const;
 
 };
 

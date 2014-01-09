@@ -69,7 +69,7 @@ bool A2L::readFile() {
 
             if ( strlst.size() > A2LCHARBLOCKMINSIZE-1 ) {
 
-                if ( regexp_C.exactMatch(strlst[0]) && (strlst[2] == "VALUE") ){
+                if ( regexp_C.exactMatch(strlst[0]) && (strlst[2] == "VALUE") ){  // temporary only clear scalaras
                     m_scalarsInfo.push_back(strlst);
                 }
             }
@@ -99,6 +99,29 @@ bool A2L::readFile() {
 
             strlst.clear();
         }
+        else if ( str == "/begin COMPU_VTAB" ) {
+
+            while ( !a2lfile.atEnd() ) {
+
+                str = a2lfile.readLine().simplified();
+
+                if ( str.isEmpty() ) {
+                    continue;
+                }
+
+                if ( str == "/end COMPU_VTAB" ) {
+                    break;
+                }
+
+                strlst.push_back(str);
+            }
+
+            if ( strlst.size() > A2LCOMPUVTABMINSIZE-1 ) {
+                m_compuvtabsInfo.push_back(strlst);
+            }
+
+            strlst.clear();
+        }
     }
 
     a2lfile.close();
@@ -114,10 +137,22 @@ void A2L::fillScalarsInfo(QVector< QSharedPointer<ECUScalar> > &scalars) const {
 
         const ptrdiff_t compuMethodInd = findCompuMethod(m_scalarsInfo[i][6]);
 
+        if ( m_compumethodsInfo[compuMethodInd][2] == "RAT_FUNC" ) {
+
+            scal->setType(VARTYPE_SCALAR_NUM);
+            scal->setCoefficients(getCoeff(compuMethodInd));
+        }
+        else if ( m_compumethodsInfo[compuMethodInd][2] == "TAB_VERB" ) {
+
+            scal->setType(VARTYPE_SCALAR_VTAB);
+
+            const ptrdiff_t compuVTabInd = findCompuVTab(m_compumethodsInfo[compuMethodInd][5].split(' ').last());
+            scal->setVTab(getVTab(compuVTabInd));
+        }
+
         scal->setName(m_scalarsInfo[i][0]);
         scal->setShortDescription(m_scalarsInfo[i][1]);
         scal->setAddress(m_scalarsInfo[i][3].split("x").last());
-        scal->setCoefficients(getCoeff(compuMethodInd));
         scal->setMinValueSoft(m_scalarsInfo[i][7].toDouble());
         scal->setMaxValueSoft(m_scalarsInfo[i][8].toDouble());
 
@@ -146,6 +181,18 @@ ptrdiff_t A2L::findCompuMethod(const QString &str) const {
     for ( ptrdiff_t i=0; i<m_compumethodsInfo.size(); i++ ) {
 
         if ( m_compumethodsInfo[i][0] == str ) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+ptrdiff_t A2L::findCompuVTab(const QString &str) const {
+
+    for ( ptrdiff_t i=0; i<m_compuvtabsInfo.size(); i++ ) {
+
+        if ( m_compuvtabsInfo[i][0] == str ) {
             return i;
         }
     }
@@ -226,4 +273,19 @@ ptrdiff_t A2L::getLength(const QString &str) const {
     }
 
     return 0;
+}
+
+QStringList A2L::getVTab(ptrdiff_t ind) const {
+
+    QStringList vtab;
+
+    if ( ind < 0 ) {
+        return vtab;
+    }
+
+    for ( ptrdiff_t i=A2LCOMPUVTABMINSIZE; i<m_compuvtabsInfo[ind].size(); i++ ) {
+        vtab.push_back(m_compuvtabsInfo[ind][i].split(' ').last());
+    }
+
+    return vtab;
 }

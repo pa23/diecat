@@ -31,6 +31,7 @@
 #include <QString>
 #include <QVector>
 #include <QSharedPointer>
+#include <QColor>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -107,6 +108,8 @@ void MainWindow::on_action_OpenProject_triggered() {
     readA2LInfo(a2lFileName);
     readHEXData(hexFileName);
     showLabels();
+
+    ui->groupBox_Labels->setTitle("Labels (" + QString::number(m_scalars.size()) + ")");
 }
 
 void MainWindow::on_action_OpenA2L_triggered() {
@@ -136,6 +139,8 @@ void MainWindow::on_action_OpenA2L_triggered() {
 
     readA2LInfo(a2lFileName);
     showLabels();
+
+    ui->groupBox_Labels->setTitle("Labels (" + QString::number(m_scalars.size()) + ")");
 }
 
 void MainWindow::on_action_SaveChangesInHex_triggered() {
@@ -210,7 +215,7 @@ void MainWindow::readProgramSettings() {
 
 void MainWindow::prepareInfoTable() {
 
-    ui->tableWidget_Description->setRowCount(11);
+    ui->tableWidget_Description->setRowCount(12);
 
     ui->tableWidget_Description->setItem(0, 0, new QTableWidgetItem("Name"));
     ui->tableWidget_Description->setItem(0, 1, new QTableWidgetItem(""));
@@ -220,20 +225,22 @@ void MainWindow::prepareInfoTable() {
     ui->tableWidget_Description->setItem(2, 1, new QTableWidgetItem(""));
     ui->tableWidget_Description->setItem(3, 0, new QTableWidgetItem("Length, bytes"));
     ui->tableWidget_Description->setItem(3, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(4, 0, new QTableWidgetItem("Min value (soft)"));
+    ui->tableWidget_Description->setItem(4, 0, new QTableWidgetItem("Type"));
     ui->tableWidget_Description->setItem(4, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(5, 0, new QTableWidgetItem("Max value (soft)"));
+    ui->tableWidget_Description->setItem(5, 0, new QTableWidgetItem("Min value (soft)"));
     ui->tableWidget_Description->setItem(5, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(6, 0, new QTableWidgetItem("Min value (hard)"));
+    ui->tableWidget_Description->setItem(6, 0, new QTableWidgetItem("Max value (soft)"));
     ui->tableWidget_Description->setItem(6, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(7, 0, new QTableWidgetItem("Max value (hard)"));
+    ui->tableWidget_Description->setItem(7, 0, new QTableWidgetItem("Min value (hard)"));
     ui->tableWidget_Description->setItem(7, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(8, 0, new QTableWidgetItem("Read only"));
+    ui->tableWidget_Description->setItem(8, 0, new QTableWidgetItem("Max value (hard)"));
     ui->tableWidget_Description->setItem(8, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(9, 0, new QTableWidgetItem("Signed"));
+    ui->tableWidget_Description->setItem(9, 0, new QTableWidgetItem("Read only"));
     ui->tableWidget_Description->setItem(9, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(10, 0, new QTableWidgetItem("Dimension"));
+    ui->tableWidget_Description->setItem(10, 0, new QTableWidgetItem("Signed"));
     ui->tableWidget_Description->setItem(10, 1, new QTableWidgetItem(""));
+    ui->tableWidget_Description->setItem(11, 0, new QTableWidgetItem("Dimension"));
+    ui->tableWidget_Description->setItem(11, 1, new QTableWidgetItem(""));
 
     for ( ptrdiff_t i=0; i<ui->tableWidget_Description->rowCount(); i++ ) {
 
@@ -253,12 +260,20 @@ void MainWindow::prepareValuesTable(ptrdiff_t vartype) {
     if ( vartype == VARTYPE_SCALAR_NUM ) {
 
         ui->tableWidget_Values->setRowCount(1);
-        ui->tableWidget_Values->setItem(0, 0, new QTableWidgetItem("Value"));
+        ui->tableWidget_Values->setColumnCount(3);
+
+        ui->tableWidget_Values->setItem(0, 0, new QTableWidgetItem(""));
         ui->tableWidget_Values->item(0, 0)->
                 setFlags(ui->tableWidget_Values->item(0, 0)->flags() ^ Qt::ItemIsEditable);
+
         ui->tableWidget_Values->setItem(0, 1, new QTableWidgetItem(""));
+        ui->tableWidget_Values->item(0, 1)->setTextColor(QColor(Qt::blue));
+
+        ui->tableWidget_Values->setItem(0, 2, new QTableWidgetItem(""));
+        ui->tableWidget_Values->item(0, 2)->
+                setFlags(ui->tableWidget_Values->item(0, 2)->flags() ^ Qt::ItemIsEditable);
     }
-    else if ( vartype == VARTYPE_SCALAR_TXT ) {
+    else if ( vartype == VARTYPE_SCALAR_VTAB ) {
 
         //
     }
@@ -277,6 +292,7 @@ void MainWindow::clearTables() {
     //
 
     ui->tableWidget_Values->setRowCount(0);
+    ui->tableWidget_Values->setColumnCount(0);
 }
 
 void MainWindow::readA2LInfo(const QString &filepath) {
@@ -317,39 +333,51 @@ void MainWindow::showA2LInfo(int currItemInd) {
     ui->tableWidget_Description->item(1, 1)->setText(m_scalars[currItemInd]->shortDescription());
     ui->tableWidget_Description->item(2, 1)->setText(m_scalars[currItemInd]->address());
     ui->tableWidget_Description->item(3, 1)->setText(QString::number(m_scalars[currItemInd]->length()));
-    ui->tableWidget_Description->item(4, 1)->setText(QString::number(m_scalars[currItemInd]->minValueSoft(), 'f', m_scalars[currItemInd]->precision()));
-    ui->tableWidget_Description->item(5, 1)->setText(QString::number(m_scalars[currItemInd]->maxValueSoft(), 'f', m_scalars[currItemInd]->precision()));
-    ui->tableWidget_Description->item(6, 1)->setText(QString::number(m_scalars[currItemInd]->minValueHard(), 'f', m_scalars[currItemInd]->precision()));
-    ui->tableWidget_Description->item(7, 1)->setText(QString::number(m_scalars[currItemInd]->maxValueHard(), 'f', m_scalars[currItemInd]->precision()));
+
+    if ( m_scalars[currItemInd]->type() == VARTYPE_SCALAR_NUM ) {
+        ui->tableWidget_Description->item(4, 1)->setText("Numeric");
+    }
+    else if ( m_scalars[currItemInd]->type() == VARTYPE_SCALAR_VTAB ) {
+        ui->tableWidget_Description->item(4, 1)->setText("VTable");
+    }
+
+    ui->tableWidget_Description->item(5, 1)->setText(QString::number(m_scalars[currItemInd]->minValueSoft(), 'f', m_scalars[currItemInd]->precision()));
+    ui->tableWidget_Description->item(6, 1)->setText(QString::number(m_scalars[currItemInd]->maxValueSoft(), 'f', m_scalars[currItemInd]->precision()));
+    ui->tableWidget_Description->item(7, 1)->setText(QString::number(m_scalars[currItemInd]->minValueHard(), 'f', m_scalars[currItemInd]->precision()));
+    ui->tableWidget_Description->item(8, 1)->setText(QString::number(m_scalars[currItemInd]->maxValueHard(), 'f', m_scalars[currItemInd]->precision()));
 
     if ( m_scalars[currItemInd]->isReadOnly() ) {
-        ui->tableWidget_Description->item(8, 1)->setText("true");
-    }
-    else {
-        ui->tableWidget_Description->item(8, 1)->setText("false");
-    }
-
-    if ( m_scalars[currItemInd]->isSigned() ) {
         ui->tableWidget_Description->item(9, 1)->setText("true");
     }
     else {
         ui->tableWidget_Description->item(9, 1)->setText("false");
     }
 
-    ui->tableWidget_Description->item(10, 1)->setText(m_scalars[currItemInd]->dimension());
+    if ( m_scalars[currItemInd]->isSigned() ) {
+        ui->tableWidget_Description->item(10, 1)->setText("true");
+    }
+    else {
+        ui->tableWidget_Description->item(10, 1)->setText("false");
+    }
+
+    ui->tableWidget_Description->item(11, 1)->setText(m_scalars[currItemInd]->dimension());
 
     ui->tableWidget_Description->resizeColumnsToContents();
 }
 
 void MainWindow::showHEXValue(int currItemInd, ptrdiff_t vartype) {
 
+    ui->tableWidget_Values->item(0, 0)->setText(m_scalars[currItemInd]->name());
+
     if ( vartype == VARTYPE_SCALAR_NUM ) {
-        ui->tableWidget_Values->item(0, 1)->setText(QString::number(m_scalars[currItemInd]->value(), 'f', m_scalars[currItemInd]->precision()));
+        ui->tableWidget_Values->item(0, 1)->setText(m_scalars[currItemInd]->value());
     }
-    else if ( vartype == VARTYPE_SCALAR_TXT ) {
+    else if ( vartype == VARTYPE_SCALAR_VTAB ) {
 
         //
     }
+
+    ui->tableWidget_Values->item(0, 2)->setText(m_scalars[currItemInd]->dimension());
 
     ui->tableWidget_Values->resizeColumnsToContents();
 }

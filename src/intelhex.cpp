@@ -70,7 +70,7 @@ bool IntelHEX::readHex() {
         m_hexData.push_back(s);
 
         if ( s.contains("0200000400") && (s.size() == 14) ) {
-            m_hexIndex.insert(s.mid(10, 2), n);
+            m_hexIndex.insert(s, n);
         }
 
         n++;
@@ -129,12 +129,14 @@ bool IntelHEX::readScalars(QVector<QSharedPointer<ECUScalar> > &scalars) const {
         const QString addrExt = partAddrExt + checksum(partAddrExt);
         ptrdiff_t searchInd = 0;
 
-        if ( m_hexIndex.contains(addrExt.mid(10, 2)) ) {
-            searchInd = m_hexIndex[addrExt.mid(10, 2)];
+        if ( m_hexIndex.contains(addrExt) ) {
+            searchInd = m_hexIndex[addrExt];
         }
         else {
             return false;
         }
+
+        //
 
         QVector<quint8> v;
         const QString nextStr = m_hexData[searchInd+1];
@@ -148,6 +150,9 @@ bool IntelHEX::readScalars(QVector<QSharedPointer<ECUScalar> > &scalars) const {
         }
 
         const ptrdiff_t hexDataLength = v[0];
+
+        //
+
         const quint16 strtAddr(address.toUInt(0, 16) & (0xFFFF - hexDataLength + 1));
         const QRegExp regexpStrtAddr(R"(^)" + QString::number(hexDataLength, 16).toUpper() + QString::number(strtAddr, 16).toUpper() + R"(00.*)");
         ptrdiff_t beginStrNum = 0;
@@ -160,13 +165,20 @@ bool IntelHEX::readScalars(QVector<QSharedPointer<ECUScalar> > &scalars) const {
             }
         }
 
+        //
+
         const ptrdiff_t correctStrDataSize = 8 + hexDataLength * 2 + 2;
 
         if ( m_hexData[beginStrNum].size() != correctStrDataSize ) {
             return false;
         }
 
+        //
+
         const ptrdiff_t firstByteInd = 8 + address.right(1).toUInt(0, 16) * 2;
+
+        //
+
         QString tmpStr;
         const ptrdiff_t maxSize = scalars[n]->length() * 2;
 
@@ -183,13 +195,15 @@ bool IntelHEX::readScalars(QVector<QSharedPointer<ECUScalar> > &scalars) const {
         }
 
         if ( tmpStr.size() == maxSize ) {
+
+            writeScalarValue(tmpStr, scalars[n]);
             continue;
         }
 
         for ( ptrdiff_t i=(beginStrNum+1); i<m_hexData.size(); i++ ) {
 
             if ( m_hexData[i].size() != correctStrDataSize ) {
-                return false;
+                continue;
             }
 
             for ( ptrdiff_t j=8; j<(correctStrDataSize-2); j++ ) {
@@ -203,6 +217,12 @@ bool IntelHEX::readScalars(QVector<QSharedPointer<ECUScalar> > &scalars) const {
                     tmpStr.push_back(m_hexData.at(i).at(j));
                 }
             }
+
+            if ( tmpStr.size() == maxSize ) {
+
+                writeScalarValue(tmpStr, scalars[n]);
+                break;
+            }
         }
     }
 
@@ -211,9 +231,15 @@ bool IntelHEX::readScalars(QVector<QSharedPointer<ECUScalar> > &scalars) const {
 
 void IntelHEX::writeScalarValue(QString &str, QSharedPointer<ECUScalar> &scalar) const {
 
-    const ptrdiff_t rawVal = str.toUInt(0, 16);
-    const QVector<double> coeff = scalar->coefficients();
-    const double val = (coeff[5] * rawVal - coeff[2]) / (coeff[1] - coeff[4] * rawVal);
+    if ( scalar->type() == VARTYPE_SCALAR_NUM ) {
 
-    scalar->setValue(val);
+        const ptrdiff_t rawVal = str.toUInt(0, 16);
+        const QVector<double> coeff = scalar->coefficients();
+        const double val = (coeff[5] * rawVal - coeff[2]) / (coeff[1] - coeff[4] * rawVal);
+
+        scalar->setValue(QString::number(val, 'f', scalar->precision()));
+    }
+    else {
+        return;
+    }
 }

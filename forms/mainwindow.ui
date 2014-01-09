@@ -24,7 +24,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QGroupBox" name="groupBox">
+       <widget class="QGroupBox" name="groupBox_Labels">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -109,17 +109,12 @@
             <property name="cornerButtonEnabled">
              <bool>false</bool>
             </property>
-            <property name="columnCount">
-             <number>2</number>
-            </property>
             <attribute name="horizontalHeaderVisible">
              <bool>false</bool>
             </attribute>
             <attribute name="verticalHeaderVisible">
              <bool>false</bool>
             </attribute>
-            <column/>
-            <column/>
            </widget>
           </item>
          </layout>

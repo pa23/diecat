@@ -75,6 +75,14 @@ void ECUScalar::setLength(ptrdiff_t l) {
     m_length = l;
 }
 
-void ECUScalar::setValue(double val) {
+void ECUScalar::setValue(QString val) {
     m_val = val;
+}
+
+void ECUScalar::setType(ptrdiff_t type) {
+    m_type = type;
+}
+
+void ECUScalar::setVTab(const QStringList &vtab) {
+    m_vtab = vtab;
 }

@@ -23,6 +23,9 @@
 
 #include <QString>
 #include <QVector>
+#include <QStringList>
+
+#include "constants.hpp"
 
 class ECUScalar {
 
@@ -41,7 +44,9 @@ public:
     void setPrecision(ptrdiff_t);
     void setDimension(const QString &);
     void setLength(ptrdiff_t);
-    void setValue(double);
+    void setValue(QString);
+    void setType(ptrdiff_t);
+    void setVTab(const QStringList &);
 
     QString name() const {
         return m_name;
@@ -82,8 +87,14 @@ public:
     size_t length() const {
         return m_length;
     }
-    double value() const {
+    QString value() const {
         return m_val;
+    }
+    ptrdiff_t type() const {
+        return m_type;
+    }
+    QStringList vTab() const {
+        return m_vtab;
     }
 
 private:
@@ -100,7 +111,9 @@ private:
     ptrdiff_t m_prec = 6;
     QString m_dim;
     ptrdiff_t m_length = 0;
-    double m_val = 0;
+    QString m_val;
+    ptrdiff_t m_type = VARTYPE_SCALAR_NUM;
+    QStringList m_vtab;
 
 };
 
