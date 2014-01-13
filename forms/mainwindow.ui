@@ -36,7 +36,11 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="QLineEdit" name="lineEdit_QuickSearch"/>
+          <widget class="QLineEdit" name="lineEdit_QuickSearch">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QListWidget" name="listWidget_Labels">
@@ -195,6 +199,9 @@
    </property>
   </action>
   <action name="action_ResetAllChanges">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Reset all changes</string>
    </property>
@@ -203,6 +210,9 @@
    </property>
   </action>
   <action name="action_Undo">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Undo</string>
    </property>
@@ -211,6 +221,9 @@
    </property>
   </action>
   <action name="action_Redo">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Redo</string>
    </property>
@@ -219,6 +232,9 @@
    </property>
   </action>
   <action name="action_ResetSelections">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Reset selections</string>
    </property>
@@ -227,6 +243,9 @@
    </property>
   </action>
   <action name="action_SaveChangesInHex">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Save changes in hex...</string>
    </property>

@@ -25,6 +25,7 @@
 #include <QString>
 #include <QSettings>
 #include <QDir>
+#include <QComboBox>
 
 #include "ecuscalar.hpp"
 
@@ -70,7 +71,9 @@ private:
     void readHEXData(const QString &);
     void showLabels();
     void showA2LInfo(int);
-    void showHEXValue(int, ptrdiff_t);
+    void showHEXValue(int);
+
+    QComboBox *m_comboBox_vTable;
 
 };
 

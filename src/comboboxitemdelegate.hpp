@@ -2,7 +2,7 @@
     diecat
     Diesel engines calibration tool.
 
-    File: intelhex.hpp
+    File: comboboxitemdelegate.hpp
 
     Copyright (C) 2014 Artem Petrov <pa2311@gmail.com>
 
@@ -18,35 +18,23 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INTELHEX_HPP
-#define INTELHEX_HPP
+#ifndef COMBOBOXITEMDELEGATE_HPP
+#define COMBOBOXITEMDELEGATE_HPP
 
-#include <QString>
-#include <QVector>
-#include <QSharedPointer>
-#include <QStringList>
-#include <QHash>
+#include <QStyledItemDelegate>
 
-#include "ecuscalar.hpp"
+class ComboBoxItemDelegate : public QStyledItemDelegate {
 
-class IntelHEX {
+    Q_OBJECT
 
 public:
-    IntelHEX(const QString &);
-    bool readValues(QVector< QSharedPointer<ECUScalar> > &);
-    void clear();
+    ComboBoxItemDelegate(QObject *parent = 0);
+    ~ComboBoxItemDelegate();
 
-private:
-    QString m_hexpath;
-    QStringList m_hexData;
-    QHash<QString, ptrdiff_t> m_hexIndex; // address extension -> m_hexData index
-
-    bool readHex();
-    QString checksum(const QString &) const;
-    bool readScalars(QVector< QSharedPointer<ECUScalar> > &) const;
-    void writeScalarValue(QString &, QSharedPointer<ECUScalar> &) const;
-    size_t getLength(const QString &) const;
+    virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    virtual void setEditorData(QWidget *editor, const QModelIndex &index) const;
+    virtual void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
 
 };
 
-#endif // INTELHEX_HPP
+#endif // COMBOBOXITEMDELEGATE_HPP

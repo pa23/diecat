@@ -33,20 +33,20 @@ public:
     ECUScalar();
     void setName(const QString &);
     void setShortDescription(const QString &);
+    void setType(ptrdiff_t);
     void setAddress(const QString &);
+    void setNumType(const QString &);
+    void setRangeSoft(double);
     void setCoefficients(const QVector<double> &);
     void setMinValueSoft(double);
     void setMaxValueSoft(double);
+    void setPrecision(ptrdiff_t);
     void setMinValueHard(double);
     void setMaxValueHard(double);
     void setReadOnly(bool);
-    void setSigned(bool);
-    void setPrecision(ptrdiff_t);
     void setDimension(const QString &);
-    void setLength(ptrdiff_t);
     void setValue(QString);
-    void setType(ptrdiff_t);
-    void setVTab(const QStringList &);
+    void setVTable(const QStringList &);
 
     QString name() const {
         return m_name;
@@ -54,8 +54,17 @@ public:
     QString shortDescription() const {
         return m_shortDescr;
     }
+    ptrdiff_t type() const {
+        return m_type;
+    }
     QString address() const {
         return m_addr;
+    }
+    QString numType() const {
+        return m_numType;
+    }
+    double rangeSoft() const {
+        return m_rangeSoft;
     }
     QVector<double> coefficients() const {
         return m_coeff;
@@ -66,6 +75,9 @@ public:
     double maxValueSoft() const {
         return m_maxValSoft;
     }
+    ptrdiff_t precision() const {
+        return m_prec;
+    }
     double minValueHard() const {
         return m_minValHard;
     }
@@ -75,44 +87,32 @@ public:
     bool isReadOnly() const {
         return m_readOnly;
     }
-    bool isSigned() const {
-        return m_signed;
-    }
-    ptrdiff_t precision() const {
-        return m_prec;
-    }
     QString dimension() const {
         return m_dim;
-    }
-    size_t length() const {
-        return m_length;
     }
     QString value() const {
         return m_val;
     }
-    ptrdiff_t type() const {
-        return m_type;
-    }
-    QStringList vTab() const {
+    QStringList vTable() const {
         return m_vtab;
     }
 
 private:
     QString m_name;
     QString m_shortDescr;
+    ptrdiff_t m_type = VARTYPE_SCALAR_NUM;
     QString m_addr;
+    QString m_numType;
+    double m_rangeSoft = 0;
     QVector<double> m_coeff;
     double m_minValSoft = 0;
     double m_maxValSoft = 0;
+    ptrdiff_t m_prec = 6;
     double m_minValHard = 0;
     double m_maxValHard = 0;
     bool m_readOnly = false;
-    bool m_signed = false;
-    ptrdiff_t m_prec = 6;
     QString m_dim;
-    ptrdiff_t m_length = 0;
     QString m_val;
-    ptrdiff_t m_type = VARTYPE_SCALAR_NUM;
     QStringList m_vtab;
 
 };

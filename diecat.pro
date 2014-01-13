@@ -27,13 +27,15 @@ SOURCES += src/main.cpp \
     src/mainwindow.cpp \
     src/a2l.cpp \
     src/ecuscalar.cpp \
-    src/intelhex.cpp
+    src/intelhex.cpp \
+    src/comboboxitemdelegate.cpp
 
 HEADERS += src/mainwindow.hpp \
     src/constants.hpp \
     src/a2l.hpp \
     src/ecuscalar.hpp \
-    src/intelhex.hpp
+    src/intelhex.hpp \
+    src/comboboxitemdelegate.hpp
 
 FORMS += forms/mainwindow.ui
 

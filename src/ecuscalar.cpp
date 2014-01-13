@@ -31,8 +31,20 @@ void ECUScalar::setShortDescription(const QString &shortDescr) {
     m_shortDescr = shortDescr;
 }
 
+void ECUScalar::setType(ptrdiff_t type) {
+    m_type = type;
+}
+
 void ECUScalar::setAddress(const QString &addr) {
     m_addr = addr;
+}
+
+void ECUScalar::setNumType(const QString &numtype) {
+    m_numType = numtype;
+}
+
+void ECUScalar::setRangeSoft(double range) {
+    m_rangeSoft = range;
 }
 
 void ECUScalar::setCoefficients(const QVector<double> &coeff) {
@@ -47,6 +59,10 @@ void ECUScalar::setMaxValueSoft(double maxValSoft) {
     m_maxValSoft = maxValSoft;
 }
 
+void ECUScalar::setPrecision(ptrdiff_t prec) {
+    m_prec = prec;
+}
+
 void ECUScalar::setMinValueHard(double minValHard) {
     m_minValHard = minValHard;
 }
@@ -59,30 +75,14 @@ void ECUScalar::setReadOnly(bool ro) {
     m_readOnly = ro;
 }
 
-void ECUScalar::setSigned(bool s) {
-    m_signed = s;
-}
-
-void ECUScalar::setPrecision(ptrdiff_t prec) {
-    m_prec = prec;
-}
-
 void ECUScalar::setDimension(const QString &dim) {
     m_dim = dim;
-}
-
-void ECUScalar::setLength(ptrdiff_t l) {
-    m_length = l;
 }
 
 void ECUScalar::setValue(QString val) {
     m_val = val;
 }
 
-void ECUScalar::setType(ptrdiff_t type) {
-    m_type = type;
-}
-
-void ECUScalar::setVTab(const QStringList &vtab) {
+void ECUScalar::setVTable(const QStringList &vtab) {
     m_vtab = vtab;
 }

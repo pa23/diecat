@@ -29,6 +29,9 @@
 #include <QFile>
 #include <QRegExp>
 
+#include <cstdio>
+#include <limits>
+
 IntelHEX::IntelHEX(const QString &path) {
     m_hexpath = path;
 }
@@ -154,7 +157,16 @@ bool IntelHEX::readScalars(QVector<QSharedPointer<ECUScalar> > &scalars) const {
         //
 
         const quint16 strtAddr(address.toUInt(0, 16) & (0xFFFF - hexDataLength + 1));
-        const QRegExp regexpStrtAddr(R"(^)" + QString::number(hexDataLength, 16).toUpper() + QString::number(strtAddr, 16).toUpper() + R"(00.*)");
+        QString hexStrtAddr = QString::number(strtAddr, 16).toUpper();
+
+        ptrdiff_t addsymbnum = 4 - hexStrtAddr.size();
+        if ( hexStrtAddr.size() < 4 ) {
+            for ( ptrdiff_t i=0; i<addsymbnum; i++ ) {
+                hexStrtAddr.insert(0, "0");
+            }
+        }
+
+        const QRegExp regexpStrtAddr(R"(^)" + QString::number(hexDataLength, 16).toUpper() + hexStrtAddr + R"(00.*)");
         ptrdiff_t beginStrNum = 0;
 
         for ( ptrdiff_t i=searchInd+1; i<m_hexData.size(); i++ ) {
@@ -180,23 +192,19 @@ bool IntelHEX::readScalars(QVector<QSharedPointer<ECUScalar> > &scalars) const {
         //
 
         QString tmpStr;
-        const ptrdiff_t maxSize = scalars[n]->length() * 2;
+        const ptrdiff_t maxSize = getLength(scalars[n]->numType()) * 2;
 
         for ( ptrdiff_t j=firstByteInd; j<(m_hexData[beginStrNum].size()-2); j++ ) {
 
-            if ( tmpStr.size() == maxSize ) {
+            tmpStr.push_back(m_hexData.at(beginStrNum).at(j));
 
+            if ( tmpStr.size() == maxSize ) {
                 writeScalarValue(tmpStr, scalars[n]);
                 break;
-            }
-            else {
-                tmpStr.push_back(m_hexData.at(beginStrNum).at(j));
             }
         }
 
         if ( tmpStr.size() == maxSize ) {
-
-            writeScalarValue(tmpStr, scalars[n]);
             continue;
         }
 
@@ -208,19 +216,15 @@ bool IntelHEX::readScalars(QVector<QSharedPointer<ECUScalar> > &scalars) const {
 
             for ( ptrdiff_t j=8; j<(correctStrDataSize-2); j++ ) {
 
-                if ( tmpStr.size() == maxSize ) {
+                tmpStr.push_back(m_hexData.at(i).at(j));
 
+                if ( tmpStr.size() == maxSize ) {
                     writeScalarValue(tmpStr, scalars[n]);
                     break;
-                }
-                else {
-                    tmpStr.push_back(m_hexData.at(i).at(j));
                 }
             }
 
             if ( tmpStr.size() == maxSize ) {
-
-                writeScalarValue(tmpStr, scalars[n]);
                 break;
             }
         }
@@ -233,13 +237,81 @@ void IntelHEX::writeScalarValue(QString &str, QSharedPointer<ECUScalar> &scalar)
 
     if ( scalar->type() == VARTYPE_SCALAR_NUM ) {
 
-        const ptrdiff_t rawVal = str.toUInt(0, 16);
+        QString numtype = scalar->numType();
+        size_t rawVal = str.toULongLong(0, 16);
+        double preVal = 0;
+        double val = 0;
+
+        if ( numtype == "Ws8" ) {
+
+            ptrdiff_t i = 0;
+
+            if ( rawVal > CHAR_MAX ) {
+                i = rawVal - UCHAR_MAX - 1;
+            }
+            else {
+                i = rawVal;
+            }
+
+            preVal = static_cast<double>(i);
+        }
+        else if ( numtype == "Ws16" ) {
+
+            ptrdiff_t i = 0;
+
+            if ( rawVal > SHRT_MAX ) {
+                i = rawVal - USHRT_MAX - 1;
+            }
+            else {
+                i = rawVal;
+            }
+
+            preVal = static_cast<double>(i);
+        }
+        else if ( numtype == "Ws32" ) {
+
+            ptrdiff_t i = 0;
+
+            if ( rawVal > INT_MAX ) {
+                i = rawVal - UINT_MAX - 1;
+            }
+            else {
+                i = rawVal;
+            }
+
+            preVal = static_cast<double>(i);
+        }
+        else if ( numtype == "Wr32" ) {
+
+            float f = 0;
+            sscanf(str.toLatin1().data(), "%x", (int*)&f);
+            preVal = static_cast<double>(f);
+        }
+        else {
+            preVal = static_cast<double>(rawVal);
+        }
+
         const QVector<double> coeff = scalar->coefficients();
-        const double val = (coeff[5] * rawVal - coeff[2]) / (coeff[1] - coeff[4] * rawVal);
+        val = (coeff[5] * preVal - coeff[2]) / (coeff[1] - coeff[4] * preVal);
 
         scalar->setValue(QString::number(val, 'f', scalar->precision()));
+    }
+    else if ( scalar->type() == VARTYPE_SCALAR_VTAB ) {
+        scalar->setValue(QString::number(str.toUInt(0, 16)));
     }
     else {
         return;
     }
+}
+
+size_t IntelHEX::getLength(const QString &type) const {
+
+    if ( type.size() == 3 ) {
+        return type.right(1).toUInt() / 8;
+    }
+    else if ( type.size() == 4 ) {
+        return type.right(2).toUInt() / 8;
+    }
+
+    return 0;
 }

@@ -69,7 +69,7 @@ bool A2L::readFile() {
 
             if ( strlst.size() > A2LCHARBLOCKMINSIZE-1 ) {
 
-                if ( regexp_C.exactMatch(strlst[0]) && (strlst[2] == "VALUE") ){  // temporary only clear scalaras
+                if ( strlst[2] == "VALUE" ){  // temporary only clear scalaras
                     m_scalarsInfo.push_back(strlst);
                 }
             }
@@ -147,24 +147,24 @@ void A2L::fillScalarsInfo(QVector< QSharedPointer<ECUScalar> > &scalars) const {
             scal->setType(VARTYPE_SCALAR_VTAB);
 
             const ptrdiff_t compuVTabInd = findCompuVTab(m_compumethodsInfo[compuMethodInd][5].split(' ').last());
-            scal->setVTab(getVTab(compuVTabInd));
+            scal->setVTable(getVTab(compuVTabInd));
         }
 
         scal->setName(m_scalarsInfo[i][0]);
-        scal->setShortDescription(m_scalarsInfo[i][1]);
+        scal->setShortDescription(delQuotes(m_scalarsInfo[i][1]));
         scal->setAddress(m_scalarsInfo[i][3].split("x").last());
+        scal->setNumType(m_scalarsInfo[i][4].split('_').last());
+        scal->setRangeSoft(m_scalarsInfo[i][5].toDouble());
         scal->setMinValueSoft(m_scalarsInfo[i][7].toDouble());
         scal->setMaxValueSoft(m_scalarsInfo[i][8].toDouble());
+        scal->setPrecision(delQuotes(m_scalarsInfo[i][9].split('.').last()).toInt());
 
         QVector<double> v = getHardLimints(m_scalarsInfo[i][10]);
         scal->setMinValueHard(v[0]);
         scal->setMaxValueHard(v[1]);
 
         scal->setReadOnly(isReadOnly(i));
-        scal->setSigned(isSigned(m_scalarsInfo[i][4]));
-        scal->setLength(getLength(m_scalarsInfo[i][4]));
-        scal->setPrecision(m_scalarsInfo[i][9].split('.').last().split('"').first().toInt());
-        scal->setDimension(m_compumethodsInfo[compuMethodInd][4]);
+        scal->setDimension("[" + delQuotes(m_compumethodsInfo[compuMethodInd][4]) + "]");
 
         scalars.push_back(scal);
     }
@@ -249,32 +249,6 @@ bool A2L::isReadOnly(ptrdiff_t ind) const {
     return false;
 }
 
-bool A2L::isSigned(const QString &str) const {
-
-    if ( str.size() >= 6 ) {
-
-        if ( str.mid(4, 1) == "s" ) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-ptrdiff_t A2L::getLength(const QString &str) const {
-
-    const QString pstr = str.split('_').last();
-
-    if ( pstr.size() == 3 ) {
-        return pstr.right(1).toInt() / 8;
-    }
-    else if ( pstr.size() == 4 ) {
-        return pstr.right(2).toInt() / 8;
-    }
-
-    return 0;
-}
-
 QStringList A2L::getVTab(ptrdiff_t ind) const {
 
     QStringList vtab;
@@ -284,8 +258,27 @@ QStringList A2L::getVTab(ptrdiff_t ind) const {
     }
 
     for ( ptrdiff_t i=A2LCOMPUVTABMINSIZE; i<m_compuvtabsInfo[ind].size(); i++ ) {
-        vtab.push_back(m_compuvtabsInfo[ind][i].split(' ').last());
+
+        QStringList tmpstrlst = m_compuvtabsInfo[ind][i].split(' ');
+        tmpstrlst.removeFirst();
+
+        vtab.push_back(delQuotes(tmpstrlst.join(' ')));
     }
 
     return vtab;
+}
+
+const QString A2L::delQuotes(const QString &str) const {
+
+    QString ret = str;
+
+    if ( ret.startsWith("\"") ) {
+        ret.remove(0, 1);
+    }
+
+    if ( ret.endsWith("\"") ) {
+        ret.remove(ret.size()-1, 1);
+    }
+
+    return ret;
 }
