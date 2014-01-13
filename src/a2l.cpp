@@ -1,6 +1,6 @@
 /*
     diecat
-    Diesel engines calibration tool.
+    A2L/HEX file reader.
 
     File: a2l.cpp
 

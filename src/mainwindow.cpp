@@ -1,6 +1,6 @@
 /*
     diecat
-    Diesel engines calibration tool.
+    A2L/HEX file reader.
 
     File: mainwindow.cpp
 
@@ -176,7 +176,7 @@ void MainWindow::on_action_About_triggered() {
     const QString str =
             "<b>" + QString(PROGNAME) + " v" + QString(PROGVER) + "</b> "
             + "(Date of build: " + QString(__DATE__) + ")<br>"
-            + "Diesel engines calibration tool.<br><br>"
+            + "A2L/HEX file reader.<br><br>"
             "Copyright (C) 2013-2014 Artem Petrov "
             "<a href=\"mailto:pa2311@gmail.com\">pa2311@gmail.com</a><br><br>"
             "Source code hosting: "
