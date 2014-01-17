@@ -28,16 +28,19 @@ SOURCES += src/main.cpp \
     src/a2l.cpp \
     src/ecuscalar.cpp \
     src/intelhex.cpp \
-    src/comboboxitemdelegate.cpp
+    src/comboboxitemdelegate.cpp \
+    src/labelinfodialog.cpp
 
 HEADERS += src/mainwindow.hpp \
     src/constants.hpp \
     src/a2l.hpp \
     src/ecuscalar.hpp \
     src/intelhex.hpp \
-    src/comboboxitemdelegate.hpp
+    src/comboboxitemdelegate.hpp \
+    src/labelinfodialog.hpp
 
-FORMS += forms/mainwindow.ui
+FORMS += forms/mainwindow.ui \
+    forms/labelinfodialog.ui
 
 QMAKE_CXXFLAGS += -std=c++11 -W -pedantic
 

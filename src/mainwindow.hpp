@@ -28,6 +28,7 @@
 #include <QComboBox>
 
 #include "ecuscalar.hpp"
+#include "labelinfodialog.hpp"
 
 namespace Ui {
 class MainWindow;
@@ -45,16 +46,22 @@ private slots:
     void on_action_OpenProject_triggered();
     void on_action_OpenA2L_triggered();
     void on_action_SaveChangesInHex_triggered();
+    void on_action_JumpToSearchLine_triggered();
+    void on_action_Select_triggered();
+    void on_action_Unselect_triggered();
+    void on_action_SelectAll_triggered();
+    void on_action_UnselectAll_triggered();
+    void on_action_LabelInfo_triggered();
     void on_action_Undo_triggered();
     void on_action_Redo_triggered();
     void on_action_ResetSelections_triggered();
     void on_action_ResetAllChanges_triggered();
     void on_action_About_triggered();
 
-    void itemChanged(int);
-
 private:
     Ui::MainWindow *ui;
+    LabelInfoDialog *m_labelInfoDialog;
+
     QString m_lastA2LPath = QDir::currentPath();
     QString m_lastHEXPath = QDir::currentPath();
     QSettings m_progSettings;
@@ -63,15 +70,12 @@ private:
     void writeProgramSettings();
     void readProgramSettings();
 
-    void prepareInfoTable();
-    void prepareValuesTable(ptrdiff_t);
-    void clearTables();
+    void addParameterToTable();
+    void deleteParameterFromTable();
 
     void readA2LInfo(const QString &);
     void readHEXData(const QString &);
     void showLabels();
-    void showA2LInfo(int);
-    void showHEXValue(int);
 
     QComboBox *m_comboBox_vTable;
 

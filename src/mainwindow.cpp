@@ -25,6 +25,7 @@
 #include "ecuscalar.hpp"
 #include "intelhex.hpp"
 #include "comboboxitemdelegate.hpp"
+#include "labelinfodialog.hpp"
 
 #include <QMessageBox>
 #include <QFileDialog>
@@ -35,10 +36,12 @@
 #include <QColor>
 #include <QComboBox>
 #include <QItemDelegate>
+#include <QTableWidget>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
+    m_labelInfoDialog(new LabelInfoDialog(this)),
     m_progSettings("pa23software", PROGNAME) {
 
     ui->setupUi(this);
@@ -53,11 +56,6 @@ MainWindow::MainWindow(QWidget *parent) :
     //
 
     readProgramSettings();
-    prepareInfoTable();
-
-    //
-
-    connect(ui->listWidget_Labels, SIGNAL(currentRowChanged(int)), this, SLOT(itemChanged(int)));
 }
 
 MainWindow::~MainWindow() {
@@ -105,7 +103,6 @@ void MainWindow::on_action_OpenProject_triggered() {
 
     ui->lineEdit_QuickSearch->clear();
     ui->listWidget_Labels->clear();
-    clearTables();
     m_scalars.clear();
 
     readA2LInfo(a2lFileName);
@@ -137,7 +134,6 @@ void MainWindow::on_action_OpenA2L_triggered() {
 
     ui->lineEdit_QuickSearch->clear();
     ui->listWidget_Labels->clear();
-    clearTables();
     m_scalars.clear();
 
     readA2LInfo(a2lFileName);
@@ -149,6 +145,74 @@ void MainWindow::on_action_OpenA2L_triggered() {
 void MainWindow::on_action_SaveChangesInHex_triggered() {
 
     //
+}
+
+void MainWindow::on_action_JumpToSearchLine_triggered() {
+
+    ui->lineEdit_QuickSearch->setFocus();
+}
+
+void MainWindow::on_action_Select_triggered() {
+
+    ui->listWidget_Labels->currentItem()->setBackgroundColor(QColor(Qt::red));
+    addParameterToTable();
+    ui->listWidget_Labels->setCurrentRow(ui->listWidget_Labels->currentRow() + 1);
+}
+
+void MainWindow::on_action_Unselect_triggered() {
+
+    ui->listWidget_Labels->currentItem()->setBackgroundColor(QColor(Qt::white));
+    deleteParameterFromTable();
+    ui->listWidget_Labels->setCurrentRow(ui->listWidget_Labels->currentRow() + 1);
+}
+
+void MainWindow::on_action_SelectAll_triggered() {
+
+    //
+}
+
+void MainWindow::on_action_UnselectAll_triggered() {
+
+    //
+}
+
+void MainWindow::on_action_LabelInfo_triggered() {
+
+    QTableWidget *tableWidget_Description =
+            m_labelInfoDialog->findChild<QTableWidget *>("tableWidget_Description");
+    ptrdiff_t currItemInd = ui->listWidget_Labels->currentRow();
+
+    tableWidget_Description->item(0, 1)->setText(m_scalars[currItemInd]->name());
+    tableWidget_Description->item(1, 1)->setText(m_scalars[currItemInd]->shortDescription());
+    tableWidget_Description->item(2, 1)->setText(m_scalars[currItemInd]->address());
+    tableWidget_Description->item(3, 1)->setText(m_scalars[currItemInd]->numType());
+
+    if ( m_scalars[currItemInd]->type() == VARTYPE_SCALAR_NUM ) {
+        tableWidget_Description->item(4, 1)->setText("Numeric");
+    }
+    else if ( m_scalars[currItemInd]->type() == VARTYPE_SCALAR_VTAB ) {
+        tableWidget_Description->item(4, 1)->setText("VTable");
+    }
+
+    tableWidget_Description->item(5, 1)->setText(QString::number(m_scalars[currItemInd]->minValueSoft(), 'f', m_scalars[currItemInd]->precision()));
+    tableWidget_Description->item(6, 1)->setText(QString::number(m_scalars[currItemInd]->maxValueSoft(), 'f', m_scalars[currItemInd]->precision()));
+    tableWidget_Description->item(7, 1)->setText(QString::number(m_scalars[currItemInd]->minValueHard(), 'f', m_scalars[currItemInd]->precision()));
+    tableWidget_Description->item(8, 1)->setText(QString::number(m_scalars[currItemInd]->maxValueHard(), 'f', m_scalars[currItemInd]->precision()));
+
+    if ( m_scalars[currItemInd]->isReadOnly() ) {
+        tableWidget_Description->item(9, 1)->setText("true");
+    }
+    else {
+        tableWidget_Description->item(9, 1)->setText("false");
+    }
+
+    tableWidget_Description->item(10, 1)->setText(m_scalars[currItemInd]->dimension());
+
+    tableWidget_Description->resizeColumnsToContents();
+
+    //
+
+    m_labelInfoDialog->show();
 }
 
 void MainWindow::on_action_Undo_triggered() {
@@ -216,108 +280,84 @@ void MainWindow::readProgramSettings() {
     m_progSettings.endGroup();
 }
 
-void MainWindow::prepareInfoTable() {
+void MainWindow::addParameterToTable() {
 
-    ui->tableWidget_Description->setRowCount(11);
+    ptrdiff_t currInd = ui->listWidget_Labels->currentRow();
 
-    ui->tableWidget_Description->setItem(0, 0, new QTableWidgetItem("Name"));
-    ui->tableWidget_Description->setItem(0, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(1, 0, new QTableWidgetItem("Description"));
-    ui->tableWidget_Description->setItem(1, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(2, 0, new QTableWidgetItem("Address"));
-    ui->tableWidget_Description->setItem(2, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(3, 0, new QTableWidgetItem("Numeric type"));
-    ui->tableWidget_Description->setItem(3, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(4, 0, new QTableWidgetItem("Scalar type"));
-    ui->tableWidget_Description->setItem(4, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(5, 0, new QTableWidgetItem("Min value (soft)"));
-    ui->tableWidget_Description->setItem(5, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(6, 0, new QTableWidgetItem("Max value (soft)"));
-    ui->tableWidget_Description->setItem(6, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(7, 0, new QTableWidgetItem("Min value (hard)"));
-    ui->tableWidget_Description->setItem(7, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(8, 0, new QTableWidgetItem("Max value (hard)"));
-    ui->tableWidget_Description->setItem(8, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(9, 0, new QTableWidgetItem("Read only"));
-    ui->tableWidget_Description->setItem(9, 1, new QTableWidgetItem(""));
-    ui->tableWidget_Description->setItem(10, 0, new QTableWidgetItem("Dimension"));
-    ui->tableWidget_Description->setItem(10, 1, new QTableWidgetItem(""));
+    for ( ptrdiff_t i=0; i<ui->tableWidget_Values->rowCount(); i++ ) {
 
-    for ( ptrdiff_t i=0; i<ui->tableWidget_Description->rowCount(); i++ ) {
-
-        for ( ptrdiff_t j=0; j<ui->tableWidget_Description->columnCount(); j++ ) {
-
-            ui->tableWidget_Description->item(i, j)->
-                    setFlags(ui->tableWidget_Description->item(i, j)->flags() ^ Qt::ItemIsEditable);
+        if ( ui->tableWidget_Values->item(i, 0)->text().toInt() == currInd ) {
+            return;
         }
     }
 
-    ui->tableWidget_Description->resizeRowsToContents();
-    ui->tableWidget_Description->resizeColumnsToContents();
-}
+    ptrdiff_t varType = m_scalars[currInd]->type();
 
-void MainWindow::prepareValuesTable(ptrdiff_t vartype) {
+    ptrdiff_t tblRow = ui->tableWidget_Values->rowCount();
+    ui->tableWidget_Values->setRowCount(tblRow + 1);
 
-    if ( vartype == VARTYPE_SCALAR_NUM ) {
-
-        ui->tableWidget_Values->setRowCount(0);
-        ui->tableWidget_Values->setColumnCount(0);
+    if ( varType == VARTYPE_SCALAR_NUM ) {
 
         //ui->tableWidget_Values->setItemDelegate(new QItemDelegate());
 
-        ui->tableWidget_Values->setRowCount(1);
-        ui->tableWidget_Values->setColumnCount(3);
+        ui->tableWidget_Values->setColumnCount(4);
 
-        ui->tableWidget_Values->setItem(0, 0, new QTableWidgetItem(""));
-        ui->tableWidget_Values->item(0, 0)->
-                setFlags(ui->tableWidget_Values->item(0, 0)->flags() ^ Qt::ItemIsEditable);
+        ui->tableWidget_Values->setItem(tblRow, 0, new QTableWidgetItem(QString::number(currInd)));
+        ui->tableWidget_Values->item(tblRow, 0)->
+                setFlags(ui->tableWidget_Values->item(tblRow, 0)->flags() ^ Qt::ItemIsEditable);
 
-        ui->tableWidget_Values->setItem(0, 1, new QTableWidgetItem(""));
-        ui->tableWidget_Values->item(0, 1)->setTextColor(QColor(Qt::blue));
+        ui->tableWidget_Values->setItem(tblRow, 1, new QTableWidgetItem(m_scalars[currInd]->name()));
+        ui->tableWidget_Values->item(tblRow, 1)->
+                setFlags(ui->tableWidget_Values->item(tblRow, 1)->flags() ^ Qt::ItemIsEditable);
 
-        ui->tableWidget_Values->setItem(0, 2, new QTableWidgetItem(""));
-        ui->tableWidget_Values->item(0, 2)->
-                setFlags(ui->tableWidget_Values->item(0, 2)->flags() ^ Qt::ItemIsEditable);
+        ui->tableWidget_Values->setItem(tblRow, 2, new QTableWidgetItem(m_scalars[currInd]->value()));
+        ui->tableWidget_Values->item(tblRow, 2)->setTextColor(QColor(Qt::blue));
+
+        ui->tableWidget_Values->setItem(tblRow, 3, new QTableWidgetItem(m_scalars[currInd]->dimension()));
+        ui->tableWidget_Values->item(tblRow, 3)->
+                setFlags(ui->tableWidget_Values->item(tblRow, 3)->flags() ^ Qt::ItemIsEditable);
     }
-    else if ( vartype == VARTYPE_SCALAR_VTAB ) {
-
-        ui->tableWidget_Values->setRowCount(0);
-        ui->tableWidget_Values->setColumnCount(0);
+    else if ( varType == VARTYPE_SCALAR_VTAB ) {
 
         //ui->tableWidget_Values->setItemDelegate(new ComboBoxItemDelegate(ui->tableWidget_Values));
 
-        ui->tableWidget_Values->setRowCount(1);
-        ui->tableWidget_Values->setColumnCount(3);
+        ui->tableWidget_Values->setColumnCount(4);
 
-        ui->tableWidget_Values->setItem(0, 0, new QTableWidgetItem(""));
-        ui->tableWidget_Values->item(0, 0)->
-                setFlags(ui->tableWidget_Values->item(0, 0)->flags() ^ Qt::ItemIsEditable);
+        ui->tableWidget_Values->setItem(tblRow, 0, new QTableWidgetItem(QString::number(currInd)));
+        ui->tableWidget_Values->item(tblRow, 0)->
+                setFlags(ui->tableWidget_Values->item(tblRow, 0)->flags() ^ Qt::ItemIsEditable);
 
-        ////
+        ui->tableWidget_Values->setItem(tblRow, 1, new QTableWidgetItem(m_scalars[currInd]->name()));
+        ui->tableWidget_Values->item(tblRow, 1)->
+                setFlags(ui->tableWidget_Values->item(tblRow, 1)->flags() ^ Qt::ItemIsEditable);
+
         m_comboBox_vTable = new QComboBox(ui->tableWidget_Values);
-        m_comboBox_vTable->setMinimumWidth(250);
-        ui->tableWidget_Values->setCellWidget(0, 1, m_comboBox_vTable);
+        m_comboBox_vTable->setMinimumWidth(230);
+        ui->tableWidget_Values->setCellWidget(tblRow, 2, m_comboBox_vTable);
 
-        ui->tableWidget_Values->setItem(0, 2, new QTableWidgetItem(""));
-        ui->tableWidget_Values->item(0, 2)->
-                setFlags(ui->tableWidget_Values->item(0, 2)->flags() ^ Qt::ItemIsEditable);
+        m_comboBox_vTable->clear();
+        m_comboBox_vTable->addItems(m_scalars[currInd]->vTable());
+        m_comboBox_vTable->setCurrentIndex(m_scalars[currInd]->value().toInt());
+
+        ui->tableWidget_Values->setItem(tblRow, 3, new QTableWidgetItem(m_scalars[currInd]->dimension()));
+        ui->tableWidget_Values->item(tblRow, 3)->
+                setFlags(ui->tableWidget_Values->item(tblRow, 3)->flags() ^ Qt::ItemIsEditable);
     }
 
     ui->tableWidget_Values->resizeRowsToContents();
+    ui->tableWidget_Values->resizeColumnsToContents();
 }
 
-void MainWindow::clearTables() {
+void MainWindow::deleteParameterFromTable() {
 
-    for ( ptrdiff_t i=0; i<ui->tableWidget_Description->rowCount(); i++ ) {
-        ui->tableWidget_Description->item(i, 1)->setText("");
+    ptrdiff_t currInd = ui->listWidget_Labels->currentRow();
+
+    for ( ptrdiff_t i=0; i<ui->tableWidget_Values->rowCount(); i++ ) {
+
+        if ( ui->tableWidget_Values->item(i, 0)->text().toInt() == currInd ) {
+            ui->tableWidget_Values->removeRow(i);
+        }
     }
-
-    ui->tableWidget_Description->resizeColumnsToContents();
-
-    //
-
-    ui->tableWidget_Values->setRowCount(0);
-    ui->tableWidget_Values->setColumnCount(0);
 }
 
 void MainWindow::readA2LInfo(const QString &filepath) {
@@ -350,75 +390,4 @@ void MainWindow::showLabels() {
     for ( ptrdiff_t i=0; i<m_scalars.size(); i++ ) {
         ui->listWidget_Labels->addItem(m_scalars[i]->name());
     }
-}
-
-void MainWindow::showA2LInfo(int currItemInd) {
-
-    ui->tableWidget_Description->item(0, 1)->setText(m_scalars[currItemInd]->name());
-    ui->tableWidget_Description->item(1, 1)->setText(m_scalars[currItemInd]->shortDescription());
-    ui->tableWidget_Description->item(2, 1)->setText(m_scalars[currItemInd]->address());
-    ui->tableWidget_Description->item(3, 1)->setText(m_scalars[currItemInd]->numType());
-
-    if ( m_scalars[currItemInd]->type() == VARTYPE_SCALAR_NUM ) {
-        ui->tableWidget_Description->item(4, 1)->setText("Numeric");
-    }
-    else if ( m_scalars[currItemInd]->type() == VARTYPE_SCALAR_VTAB ) {
-        ui->tableWidget_Description->item(4, 1)->setText("VTable");
-    }
-
-    ui->tableWidget_Description->item(5, 1)->setText(QString::number(m_scalars[currItemInd]->minValueSoft(), 'f', m_scalars[currItemInd]->precision()));
-    ui->tableWidget_Description->item(6, 1)->setText(QString::number(m_scalars[currItemInd]->maxValueSoft(), 'f', m_scalars[currItemInd]->precision()));
-    ui->tableWidget_Description->item(7, 1)->setText(QString::number(m_scalars[currItemInd]->minValueHard(), 'f', m_scalars[currItemInd]->precision()));
-    ui->tableWidget_Description->item(8, 1)->setText(QString::number(m_scalars[currItemInd]->maxValueHard(), 'f', m_scalars[currItemInd]->precision()));
-
-    if ( m_scalars[currItemInd]->isReadOnly() ) {
-        ui->tableWidget_Description->item(9, 1)->setText("true");
-    }
-    else {
-        ui->tableWidget_Description->item(9, 1)->setText("false");
-    }
-
-    ui->tableWidget_Description->item(10, 1)->setText(m_scalars[currItemInd]->dimension());
-
-    ui->tableWidget_Description->resizeColumnsToContents();
-}
-
-void MainWindow::showHEXValue(int currItemInd) {
-
-    ptrdiff_t vartype = m_scalars[currItemInd]->type();
-
-    //
-
-    ui->tableWidget_Values->item(0, 0)->setText(m_scalars[currItemInd]->name());
-
-    if ( vartype == VARTYPE_SCALAR_NUM ) {
-        ui->tableWidget_Values->item(0, 1)->setText(m_scalars[currItemInd]->value());
-    }
-    else if ( vartype == VARTYPE_SCALAR_VTAB ) {
-
-//        QComboBox *comboBox_vTable = qobject_cast<QComboBox *>(ui->tableWidget_Values->cellWidget(0, 1));
-//        comboBox_vTable->addItems(m_scalars[currItemInd]->vTable());
-//        comboBox_vTable->setCurrentIndex(m_scalars[currItemInd]->value().toInt());
-
-        ////
-        m_comboBox_vTable->clear();
-        m_comboBox_vTable->addItems(m_scalars[currItemInd]->vTable());
-        m_comboBox_vTable->setCurrentIndex(m_scalars[currItemInd]->value().toInt());
-    }
-
-    ui->tableWidget_Values->item(0, 2)->setText(m_scalars[currItemInd]->dimension());
-
-    ui->tableWidget_Values->resizeColumnsToContents();
-}
-
-void MainWindow::itemChanged(int currItemInd) {
-
-    if ( ui->listWidget_Labels->item(currItemInd) == nullptr ) {
-        return;
-    }
-
-    showA2LInfo(currItemInd);
-
-    prepareValuesTable(m_scalars[currItemInd]->type());
-    showHEXValue(currItemInd);
 }

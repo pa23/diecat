@@ -36,11 +36,7 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="QLineEdit" name="lineEdit_QuickSearch">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-          </widget>
+          <widget class="QLineEdit" name="lineEdit_QuickSearch"/>
          </item>
          <item>
           <widget class="QListWidget" name="listWidget_Labels">
@@ -66,37 +62,6 @@
         <property name="currentIndex">
          <number>0</number>
         </property>
-        <widget class="QWidget" name="tab_descriptioon">
-         <attribute name="title">
-          <string>Description</string>
-         </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item>
-           <widget class="QTableWidget" name="tableWidget_Description">
-            <property name="sizeAdjustPolicy">
-             <enum>QAbstractScrollArea::AdjustToContents</enum>
-            </property>
-            <property name="wordWrap">
-             <bool>false</bool>
-            </property>
-            <property name="cornerButtonEnabled">
-             <bool>false</bool>
-            </property>
-            <property name="columnCount">
-             <number>2</number>
-            </property>
-            <attribute name="horizontalHeaderVisible">
-             <bool>false</bool>
-            </attribute>
-            <attribute name="verticalHeaderVisible">
-             <bool>false</bool>
-            </attribute>
-            <column/>
-            <column/>
-           </widget>
-          </item>
-         </layout>
-        </widget>
         <widget class="QWidget" name="tab_values">
          <attribute name="title">
           <string>Values</string>
@@ -164,7 +129,21 @@
     <addaction name="action_ResetSelections"/>
     <addaction name="action_ResetAllChanges"/>
    </widget>
+   <widget class="QMenu" name="menuParameters">
+    <property name="title">
+     <string>Parameters</string>
+    </property>
+    <addaction name="action_JumpToSearchLine"/>
+    <addaction name="separator"/>
+    <addaction name="action_Select"/>
+    <addaction name="action_Unselect"/>
+    <addaction name="action_SelectAll"/>
+    <addaction name="action_UnselectAll"/>
+    <addaction name="separator"/>
+    <addaction name="action_LabelInfo"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuParameters"/>
    <addaction name="menuEdit"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -259,6 +238,60 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+O</string>
+   </property>
+  </action>
+  <action name="action_Select">
+   <property name="text">
+    <string>Select</string>
+   </property>
+   <property name="shortcut">
+    <string>Ins</string>
+   </property>
+  </action>
+  <action name="action_Unselect">
+   <property name="text">
+    <string>Unselect</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
+  </action>
+  <action name="action_SelectAll">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Select all</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+Ins</string>
+   </property>
+  </action>
+  <action name="action_UnselectAll">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Unselect all</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+Del</string>
+   </property>
+  </action>
+  <action name="action_LabelInfo">
+   <property name="text">
+    <string>Label info</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="action_JumpToSearchLine">
+   <property name="text">
+    <string>Jump to search line</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
    </property>
   </action>
  </widget>

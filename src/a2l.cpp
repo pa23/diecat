@@ -40,7 +40,6 @@ bool A2L::readFile() {
 
     QString str;
     QStringList strlst;
-    QRegExp regexp_C("(.)+(_C)$");
 
     while ( !a2lfile.atEnd() ) {
 
