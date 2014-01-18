@@ -45,16 +45,13 @@ public:
 private slots:
     void on_action_OpenProject_triggered();
     void on_action_OpenA2L_triggered();
-    void on_action_SaveChangesInHex_triggered();
     void on_action_JumpToSearchLine_triggered();
     void on_action_Select_triggered();
     void on_action_Unselect_triggered();
     void on_action_LabelInfo_triggered();
-    void on_action_Undo_triggered();
-    void on_action_Redo_triggered();
-    void on_action_ResetSelections_triggered();
-    void on_action_ResetAllChanges_triggered();
     void on_action_About_triggered();
+
+    void searchTemplChanged(QString);
 
 private:
     Ui::MainWindow *ui;

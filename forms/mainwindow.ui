@@ -138,16 +138,6 @@
     </property>
     <addaction name="action_About"/>
    </widget>
-   <widget class="QMenu" name="menuEdit">
-    <property name="title">
-     <string>Edit</string>
-    </property>
-    <addaction name="action_Undo"/>
-    <addaction name="action_Redo"/>
-    <addaction name="separator"/>
-    <addaction name="action_ResetSelections"/>
-    <addaction name="action_ResetAllChanges"/>
-   </widget>
    <widget class="QMenu" name="menuParameters">
     <property name="title">
      <string>Parameters</string>
@@ -161,7 +151,6 @@
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuParameters"/>
-   <addaction name="menuEdit"/>
    <addaction name="menuHelp"/>
   </widget>
   <action name="action_OpenProject">

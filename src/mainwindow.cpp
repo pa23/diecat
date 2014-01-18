@@ -24,7 +24,6 @@
 #include "a2l.hpp"
 #include "ecuscalar.hpp"
 #include "intelhex.hpp"
-#include "comboboxitemdelegate.hpp"
 #include "labelinfodialog.hpp"
 
 #include <QMessageBox>
@@ -57,6 +56,10 @@ MainWindow::MainWindow(QWidget *parent) :
     //
 
     readProgramSettings();
+
+    //
+
+    connect(ui->lineEdit_QuickSearch, SIGNAL(textChanged(QString)), this, SLOT(searchTemplChanged(QString)));
 }
 
 MainWindow::~MainWindow() {
@@ -145,14 +148,10 @@ void MainWindow::on_action_OpenA2L_triggered() {
     ui->groupBox_Labels->setTitle("Labels (" + QString::number(m_scalars.size()) + ")");
 }
 
-void MainWindow::on_action_SaveChangesInHex_triggered() {
-
-    //
-}
-
 void MainWindow::on_action_JumpToSearchLine_triggered() {
 
     ui->lineEdit_QuickSearch->setFocus();
+    ui->lineEdit_QuickSearch->selectAll();
 }
 
 void MainWindow::on_action_Select_triggered() {
@@ -227,10 +226,18 @@ void MainWindow::on_action_LabelInfo_triggered() {
         tableWidget_Description->item(4, 1)->setText("VTable");
     }
 
-    tableWidget_Description->item(5, 1)->setText(QString::number(m_scalars[currItemInd]->minValueSoft(), 'f', m_scalars[currItemInd]->precision()));
-    tableWidget_Description->item(6, 1)->setText(QString::number(m_scalars[currItemInd]->maxValueSoft(), 'f', m_scalars[currItemInd]->precision()));
-    tableWidget_Description->item(7, 1)->setText(QString::number(m_scalars[currItemInd]->minValueHard(), 'f', m_scalars[currItemInd]->precision()));
-    tableWidget_Description->item(8, 1)->setText(QString::number(m_scalars[currItemInd]->maxValueHard(), 'f', m_scalars[currItemInd]->precision()));
+    tableWidget_Description->item(5, 1)->setText(
+                QString::number(m_scalars[currItemInd]->minValueSoft(), 'f', m_scalars[currItemInd]->precision())
+                );
+    tableWidget_Description->item(6, 1)->setText(
+                QString::number(m_scalars[currItemInd]->maxValueSoft(), 'f', m_scalars[currItemInd]->precision())
+                );
+    tableWidget_Description->item(7, 1)->setText(
+                QString::number(m_scalars[currItemInd]->minValueHard(), 'f', m_scalars[currItemInd]->precision())
+                );
+    tableWidget_Description->item(8, 1)->setText(
+                QString::number(m_scalars[currItemInd]->maxValueHard(), 'f', m_scalars[currItemInd]->precision())
+                );
 
     if ( m_scalars[currItemInd]->isReadOnly() ) {
         tableWidget_Description->item(9, 1)->setText("true");
@@ -248,31 +255,11 @@ void MainWindow::on_action_LabelInfo_triggered() {
     m_labelInfoDialog->show();
 }
 
-void MainWindow::on_action_Undo_triggered() {
-
-    //
-}
-
-void MainWindow::on_action_Redo_triggered() {
-
-    //
-}
-
-void MainWindow::on_action_ResetSelections_triggered() {
-
-    //
-}
-
-void MainWindow::on_action_ResetAllChanges_triggered() {
-
-    //
-}
-
 void MainWindow::on_action_About_triggered() {
 
     const QString str =
             "<b>" + QString(PROGNAME) + " v" + QString(PROGVER) + "</b> "
-            + "(Date of build: " + QString(__DATE__) + ")<br>"
+            + "(" + QString(__DATE__) + " " + QString(__TIME__) + ")<br>"
             + "A2L/HEX file reader.<br><br>"
             "Copyright (C) 2013-2014 Artem Petrov "
             "<a href=\"mailto:pa2311@gmail.com\">pa2311@gmail.com</a><br><br>"
@@ -293,6 +280,17 @@ void MainWindow::on_action_About_triggered() {
             "http://www.gnu.org/licenses/</a>.<br>";
 
     QMessageBox::about(this, "About " + QString(PROGNAME), str);
+}
+
+void MainWindow::searchTemplChanged(QString templ) {
+
+    for ( ptrdiff_t i=0; i<ui->tableWidget_Labels->rowCount(); i++ ) {
+
+        if ( ui->tableWidget_Labels->item(i, 0)->text().startsWith(templ, Qt::CaseInsensitive) ) {
+            ui->tableWidget_Labels->setCurrentCell(i, 0);
+            break;
+        }
+    }
 }
 
 void MainWindow::writeProgramSettings() {
@@ -326,8 +324,6 @@ void MainWindow::addParameterToTable(ptrdiff_t ind) {
 
     if ( varType == VARTYPE_SCALAR_NUM ) {
 
-        //ui->tableWidget_Values->setItemDelegate(new QItemDelegate());
-
         ui->tableWidget_Scalars->setItem(tblRow, 0, new QTableWidgetItem(m_scalars[ind]->name()));
         ui->tableWidget_Scalars->item(tblRow, 0)->
                 setFlags(ui->tableWidget_Scalars->item(tblRow, 0)->flags() ^ Qt::ItemIsEditable);
@@ -342,8 +338,6 @@ void MainWindow::addParameterToTable(ptrdiff_t ind) {
         m_scalarsInTable[ind] = true;
     }
     else if ( varType == VARTYPE_SCALAR_VTAB ) {
-
-        //ui->tableWidget_Values->setItemDelegate(new ComboBoxItemDelegate(ui->tableWidget_Values));
 
         ui->tableWidget_Scalars->setItem(tblRow, 0, new QTableWidgetItem(m_scalars[ind]->name()));
         ui->tableWidget_Scalars->item(tblRow, 0)->
