@@ -148,7 +148,7 @@ void MainWindow::on_action_OpenA2L_triggered() {
     ui->groupBox_Labels->setTitle("Labels (" + QString::number(m_scalars.size()) + ")");
 }
 
-void MainWindow::on_action_JumpToSearchLine_triggered() {
+void MainWindow::on_action_SearchLine_triggered() {
 
     ui->lineEdit_QuickSearch->setFocus();
     ui->lineEdit_QuickSearch->selectAll();
@@ -259,7 +259,7 @@ void MainWindow::on_action_About_triggered() {
 
     const QString str =
             "<b>" + QString(PROGNAME) + " v" + QString(PROGVER) + "</b> "
-            + "(" + QString(__DATE__) + " " + QString(__TIME__) + ")<br>"
+            + "[" + QString(__DATE__) + " " + QString(__TIME__) + "]<br>"
             + "A2L/HEX file reader.<br><br>"
             "Copyright (C) 2013-2014 Artem Petrov "
             "<a href=\"mailto:pa2311@gmail.com\">pa2311@gmail.com</a><br><br>"

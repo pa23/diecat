@@ -128,7 +128,6 @@
     </property>
     <addaction name="action_OpenProject"/>
     <addaction name="action_OpenA2L"/>
-    <addaction name="action_SaveChangesInHex"/>
     <addaction name="separator"/>
     <addaction name="action_Quit"/>
    </widget>
@@ -142,7 +141,7 @@
     <property name="title">
      <string>Parameters</string>
     </property>
-    <addaction name="action_JumpToSearchLine"/>
+    <addaction name="action_SearchLine"/>
     <addaction name="separator"/>
     <addaction name="action_Select"/>
     <addaction name="action_Unselect"/>
@@ -286,9 +285,9 @@
     <string>Ctrl+I</string>
    </property>
   </action>
-  <action name="action_JumpToSearchLine">
+  <action name="action_SearchLine">
    <property name="text">
-    <string>Jump to search line</string>
+    <string>Search line</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+L</string>

@@ -45,7 +45,7 @@ public:
 private slots:
     void on_action_OpenProject_triggered();
     void on_action_OpenA2L_triggered();
-    void on_action_JumpToSearchLine_triggered();
+    void on_action_SearchLine_triggered();
     void on_action_Select_triggered();
     void on_action_Unselect_triggered();
     void on_action_LabelInfo_triggered();
