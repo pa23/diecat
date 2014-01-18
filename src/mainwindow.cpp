@@ -102,7 +102,7 @@ void MainWindow::on_action_OpenProject_triggered() {
     //
 
     ui->lineEdit_QuickSearch->clear();
-    ui->listWidget_Labels->clear();
+    ui->tableWidget_Labels->setRowCount(0);
     m_scalars.clear();
 
     readA2LInfo(a2lFileName);
@@ -133,7 +133,7 @@ void MainWindow::on_action_OpenA2L_triggered() {
     //
 
     ui->lineEdit_QuickSearch->clear();
-    ui->listWidget_Labels->clear();
+    ui->tableWidget_Labels->setRowCount(0);
     m_scalars.clear();
 
     readA2LInfo(a2lFileName);
@@ -154,16 +154,22 @@ void MainWindow::on_action_JumpToSearchLine_triggered() {
 
 void MainWindow::on_action_Select_triggered() {
 
-    ui->listWidget_Labels->currentItem()->setBackgroundColor(QColor(Qt::red));
+    ui->tableWidget_Labels->currentItem()->setTextColor(QColor(Qt::red));
     addParameterToTable();
-    ui->listWidget_Labels->setCurrentRow(ui->listWidget_Labels->currentRow() + 1);
+
+    if ( ui->tableWidget_Labels->currentRow() != (ui->tableWidget_Labels->rowCount() - 1) ) {
+        ui->tableWidget_Labels->setCurrentCell(ui->tableWidget_Labels->currentRow() + 1, 0);
+    }
 }
 
 void MainWindow::on_action_Unselect_triggered() {
 
-    ui->listWidget_Labels->currentItem()->setBackgroundColor(QColor(Qt::white));
+    ui->tableWidget_Labels->currentItem()->setTextColor(QColor(Qt::black));
     deleteParameterFromTable();
-    ui->listWidget_Labels->setCurrentRow(ui->listWidget_Labels->currentRow() + 1);
+
+    if ( ui->tableWidget_Labels->currentRow() != (ui->tableWidget_Labels->rowCount() - 1) ) {
+        ui->tableWidget_Labels->setCurrentCell(ui->tableWidget_Labels->currentRow() + 1, 0);
+    }
 }
 
 void MainWindow::on_action_SelectAll_triggered() {
@@ -180,7 +186,7 @@ void MainWindow::on_action_LabelInfo_triggered() {
 
     QTableWidget *tableWidget_Description =
             m_labelInfoDialog->findChild<QTableWidget *>("tableWidget_Description");
-    ptrdiff_t currItemInd = ui->listWidget_Labels->currentRow();
+    ptrdiff_t currItemInd = ui->tableWidget_Labels->currentRow();
 
     tableWidget_Description->item(0, 1)->setText(m_scalars[currItemInd]->name());
     tableWidget_Description->item(1, 1)->setText(m_scalars[currItemInd]->shortDescription());
@@ -282,80 +288,77 @@ void MainWindow::readProgramSettings() {
 
 void MainWindow::addParameterToTable() {
 
-    ptrdiff_t currInd = ui->listWidget_Labels->currentRow();
+    ptrdiff_t currInd = ui->tableWidget_Labels->currentRow();
 
-    for ( ptrdiff_t i=0; i<ui->tableWidget_Values->rowCount(); i++ ) {
+    for ( ptrdiff_t i=0; i<ui->tableWidget_Scalars->rowCount(); i++ ) {
 
-        if ( ui->tableWidget_Values->item(i, 0)->text().toInt() == currInd ) {
+        if ( ui->tableWidget_Scalars->item(i, 0)->text().toInt() == currInd ) {
             return;
         }
     }
 
     ptrdiff_t varType = m_scalars[currInd]->type();
 
-    ptrdiff_t tblRow = ui->tableWidget_Values->rowCount();
-    ui->tableWidget_Values->setRowCount(tblRow + 1);
+    ptrdiff_t tblRow = ui->tableWidget_Scalars->rowCount();
+    ui->tableWidget_Scalars->setRowCount(tblRow + 1);
 
     if ( varType == VARTYPE_SCALAR_NUM ) {
 
         //ui->tableWidget_Values->setItemDelegate(new QItemDelegate());
 
-        ui->tableWidget_Values->setColumnCount(4);
+        ui->tableWidget_Scalars->setItem(tblRow, 0, new QTableWidgetItem(QString::number(currInd)));
+        ui->tableWidget_Scalars->item(tblRow, 0)->
+                setFlags(ui->tableWidget_Scalars->item(tblRow, 0)->flags() ^ Qt::ItemIsEditable);
 
-        ui->tableWidget_Values->setItem(tblRow, 0, new QTableWidgetItem(QString::number(currInd)));
-        ui->tableWidget_Values->item(tblRow, 0)->
-                setFlags(ui->tableWidget_Values->item(tblRow, 0)->flags() ^ Qt::ItemIsEditable);
+        ui->tableWidget_Scalars->setItem(tblRow, 1, new QTableWidgetItem(m_scalars[currInd]->name()));
+        ui->tableWidget_Scalars->item(tblRow, 1)->
+                setFlags(ui->tableWidget_Scalars->item(tblRow, 1)->flags() ^ Qt::ItemIsEditable);
 
-        ui->tableWidget_Values->setItem(tblRow, 1, new QTableWidgetItem(m_scalars[currInd]->name()));
-        ui->tableWidget_Values->item(tblRow, 1)->
-                setFlags(ui->tableWidget_Values->item(tblRow, 1)->flags() ^ Qt::ItemIsEditable);
+        ui->tableWidget_Scalars->setItem(tblRow, 2, new QTableWidgetItem(m_scalars[currInd]->value()));
+        ui->tableWidget_Scalars->item(tblRow, 2)->setTextColor(QColor(Qt::blue));
 
-        ui->tableWidget_Values->setItem(tblRow, 2, new QTableWidgetItem(m_scalars[currInd]->value()));
-        ui->tableWidget_Values->item(tblRow, 2)->setTextColor(QColor(Qt::blue));
-
-        ui->tableWidget_Values->setItem(tblRow, 3, new QTableWidgetItem(m_scalars[currInd]->dimension()));
-        ui->tableWidget_Values->item(tblRow, 3)->
-                setFlags(ui->tableWidget_Values->item(tblRow, 3)->flags() ^ Qt::ItemIsEditable);
+        ui->tableWidget_Scalars->setItem(tblRow, 3, new QTableWidgetItem(m_scalars[currInd]->dimension()));
+        ui->tableWidget_Scalars->item(tblRow, 3)->
+                setFlags(ui->tableWidget_Scalars->item(tblRow, 3)->flags() ^ Qt::ItemIsEditable);
     }
     else if ( varType == VARTYPE_SCALAR_VTAB ) {
 
         //ui->tableWidget_Values->setItemDelegate(new ComboBoxItemDelegate(ui->tableWidget_Values));
 
-        ui->tableWidget_Values->setColumnCount(4);
+        ui->tableWidget_Scalars->setItem(tblRow, 0, new QTableWidgetItem(QString::number(currInd)));
+        ui->tableWidget_Scalars->item(tblRow, 0)->
+                setFlags(ui->tableWidget_Scalars->item(tblRow, 0)->flags() ^ Qt::ItemIsEditable);
 
-        ui->tableWidget_Values->setItem(tblRow, 0, new QTableWidgetItem(QString::number(currInd)));
-        ui->tableWidget_Values->item(tblRow, 0)->
-                setFlags(ui->tableWidget_Values->item(tblRow, 0)->flags() ^ Qt::ItemIsEditable);
+        ui->tableWidget_Scalars->setItem(tblRow, 1, new QTableWidgetItem(m_scalars[currInd]->name()));
+        ui->tableWidget_Scalars->item(tblRow, 1)->
+                setFlags(ui->tableWidget_Scalars->item(tblRow, 1)->flags() ^ Qt::ItemIsEditable);
 
-        ui->tableWidget_Values->setItem(tblRow, 1, new QTableWidgetItem(m_scalars[currInd]->name()));
-        ui->tableWidget_Values->item(tblRow, 1)->
-                setFlags(ui->tableWidget_Values->item(tblRow, 1)->flags() ^ Qt::ItemIsEditable);
-
-        m_comboBox_vTable = new QComboBox(ui->tableWidget_Values);
+        m_comboBox_vTable = new QComboBox(ui->tableWidget_Scalars);
         m_comboBox_vTable->setMinimumWidth(230);
-        ui->tableWidget_Values->setCellWidget(tblRow, 2, m_comboBox_vTable);
+        ui->tableWidget_Scalars->setCellWidget(tblRow, 2, m_comboBox_vTable);
 
         m_comboBox_vTable->clear();
         m_comboBox_vTable->addItems(m_scalars[currInd]->vTable());
         m_comboBox_vTable->setCurrentIndex(m_scalars[currInd]->value().toInt());
 
-        ui->tableWidget_Values->setItem(tblRow, 3, new QTableWidgetItem(m_scalars[currInd]->dimension()));
-        ui->tableWidget_Values->item(tblRow, 3)->
-                setFlags(ui->tableWidget_Values->item(tblRow, 3)->flags() ^ Qt::ItemIsEditable);
+        ui->tableWidget_Scalars->setItem(tblRow, 3, new QTableWidgetItem(m_scalars[currInd]->dimension()));
+        ui->tableWidget_Scalars->item(tblRow, 3)->
+                setFlags(ui->tableWidget_Scalars->item(tblRow, 3)->flags() ^ Qt::ItemIsEditable);
     }
 
-    ui->tableWidget_Values->resizeRowsToContents();
-    ui->tableWidget_Values->resizeColumnsToContents();
+    ui->tableWidget_Scalars->setColumnHidden(0, true);
+    ui->tableWidget_Scalars->resizeRowsToContents();
+    ui->tableWidget_Scalars->resizeColumnsToContents();
 }
 
 void MainWindow::deleteParameterFromTable() {
 
-    ptrdiff_t currInd = ui->listWidget_Labels->currentRow();
+    ptrdiff_t currInd = ui->tableWidget_Labels->currentRow();
 
-    for ( ptrdiff_t i=0; i<ui->tableWidget_Values->rowCount(); i++ ) {
+    for ( ptrdiff_t i=0; i<ui->tableWidget_Scalars->rowCount(); i++ ) {
 
-        if ( ui->tableWidget_Values->item(i, 0)->text().toInt() == currInd ) {
-            ui->tableWidget_Values->removeRow(i);
+        if ( ui->tableWidget_Scalars->item(i, 0)->text().toInt() == currInd ) {
+            ui->tableWidget_Scalars->removeRow(i);
         }
     }
 }
@@ -387,7 +390,14 @@ void MainWindow::readHEXData(const QString &filepath) {
 
 void MainWindow::showLabels() {
 
+    ui->tableWidget_Labels->setRowCount(m_scalars.size());
+
     for ( ptrdiff_t i=0; i<m_scalars.size(); i++ ) {
-        ui->listWidget_Labels->addItem(m_scalars[i]->name());
+        ui->tableWidget_Labels->setItem(i, 0, new QTableWidgetItem(m_scalars[i]->name()));
+        ui->tableWidget_Labels->item(i, 0)->
+                setFlags(ui->tableWidget_Labels->item(i, 0)->flags() ^ Qt::ItemIsEditable);
     }
+
+    ui->tableWidget_Labels->resizeRowsToContents();
+    ui->tableWidget_Labels->resizeColumnsToContents();
 }

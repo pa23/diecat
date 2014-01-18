@@ -39,7 +39,7 @@
           <widget class="QLineEdit" name="lineEdit_QuickSearch"/>
          </item>
          <item>
-          <widget class="QListWidget" name="listWidget_Labels">
+          <widget class="QTableWidget" name="tableWidget_Labels">
            <property name="minimumSize">
             <size>
              <width>350</width>
@@ -52,6 +52,19 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="showGrid">
+            <bool>false</bool>
+           </property>
+           <property name="columnCount">
+            <number>1</number>
+           </property>
+           <attribute name="horizontalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
+           <attribute name="verticalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
+           <column/>
           </widget>
          </item>
         </layout>
@@ -64,11 +77,11 @@
         </property>
         <widget class="QWidget" name="tab_values">
          <attribute name="title">
-          <string>Values</string>
+          <string>Scalars</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
-           <widget class="QTableWidget" name="tableWidget_Values">
+           <widget class="QTableWidget" name="tableWidget_Scalars">
             <property name="sizeAdjustPolicy">
              <enum>QAbstractScrollArea::AdjustToContents</enum>
             </property>
@@ -78,12 +91,19 @@
             <property name="cornerButtonEnabled">
              <bool>false</bool>
             </property>
+            <property name="columnCount">
+             <number>4</number>
+            </property>
             <attribute name="horizontalHeaderVisible">
              <bool>false</bool>
             </attribute>
             <attribute name="verticalHeaderVisible">
              <bool>false</bool>
             </attribute>
+            <column/>
+            <column/>
+            <column/>
+            <column/>
            </widget>
           </item>
          </layout>
