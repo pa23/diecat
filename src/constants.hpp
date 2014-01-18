@@ -22,7 +22,7 @@
 #define CONSTANTS_HPP
 
 #define PROGNAME "diecat"
-#define PROGVER  "0.1.1"
+#define PROGVER  "0.2.0"
 
 #define A2LCHARBLOCKMINSIZE 9
 #define A2LCOMPUMETHODSIZE 6

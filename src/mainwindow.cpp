@@ -37,6 +37,8 @@
 #include <QItemDelegate>
 #include <QTableWidget>
 #include <QTableWidgetSelectionRange>
+#include <QTime>
+#include <QDateTime>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -110,9 +112,33 @@ void MainWindow::on_action_OpenProject_triggered() {
     ui->tableWidget_Scalars->setRowCount(0);
     m_scalars.clear();
 
+    //
+
+    QTime timer;
+
+    timer.start();
     readA2LInfo(a2lFileName);
+    ui->plainTextEdit_log->appendPlainText(
+                QDateTime::currentDateTime().toString("[yyyy-MM-dd_hh-mm-ss]")
+                + " Parsing " + a2lFileName + ": "
+                + QString::number(timer.elapsed()) + " ms"
+                );
+
+    timer.restart();
     readHEXData(hexFileName);
+    ui->plainTextEdit_log->appendPlainText(
+                QDateTime::currentDateTime().toString("[yyyy-MM-dd_hh-mm-ss]")
+                + " Reading " + hexFileName + ": "
+                + QString::number(timer.elapsed()) + " ms"
+                );
+
+    timer.restart();
     showLabels();
+    ui->plainTextEdit_log->appendPlainText(
+                QDateTime::currentDateTime().toString("[yyyy-MM-dd_hh-mm-ss]")
+                + " Displaying labels: "
+                + QString::number(timer.elapsed()) + " ms"
+                );
 
     ui->groupBox_Labels->setTitle("Labels (" + QString::number(m_scalars.size()) + ")");
 }
@@ -142,8 +168,25 @@ void MainWindow::on_action_OpenA2L_triggered() {
     ui->tableWidget_Scalars->setRowCount(0);
     m_scalars.clear();
 
+    //
+
+    QTime timer;
+
+    timer.start();
     readA2LInfo(a2lFileName);
+    ui->plainTextEdit_log->appendPlainText(
+                QDateTime::currentDateTime().toString("[yyyy-MM-dd_hh-mm-ss]")
+                + " Parsing " + a2lFileName + ": "
+                + QString::number(timer.elapsed()) + " ms"
+                );
+
+    timer.restart();
     showLabels();
+    ui->plainTextEdit_log->appendPlainText(
+                QDateTime::currentDateTime().toString("[yyyy-MM-dd_hh-mm-ss]")
+                + " Displaying labels: "
+                + QString::number(timer.elapsed()) + " ms"
+                );
 
     ui->groupBox_Labels->setTitle("Labels (" + QString::number(m_scalars.size()) + ")");
 }
@@ -155,6 +198,11 @@ void MainWindow::on_action_SearchLine_triggered() {
 }
 
 void MainWindow::on_action_Select_triggered() {
+
+    QTime timer;
+    timer.start();
+
+    //
 
     QTableWidgetSelectionRange selectedRange;
 
@@ -179,9 +227,22 @@ void MainWindow::on_action_Select_triggered() {
 
     ui->tableWidget_Scalars->resizeRowsToContents();
     ui->tableWidget_Scalars->resizeColumnsToContents();
+
+    //
+
+    ui->plainTextEdit_log->appendPlainText(
+                    QDateTime::currentDateTime().toString("[yyyy-MM-dd_hh-mm-ss]")
+                    + " Displaying values: "
+                    + QString::number(timer.elapsed()) + " ms"
+                    );
 }
 
 void MainWindow::on_action_Unselect_triggered() {
+
+    QTime timer;
+    timer.start();
+
+    //
 
     QTableWidgetSelectionRange selectedRange;
 
@@ -206,6 +267,14 @@ void MainWindow::on_action_Unselect_triggered() {
 
     ui->tableWidget_Scalars->resizeRowsToContents();
     ui->tableWidget_Scalars->resizeColumnsToContents();
+
+    //
+
+    ui->plainTextEdit_log->appendPlainText(
+                    QDateTime::currentDateTime().toString("[yyyy-MM-dd_hh-mm-ss]")
+                    + " Cleaning values table: "
+                    + QString::number(timer.elapsed()) + " ms"
+                    );
 }
 
 void MainWindow::on_action_LabelInfo_triggered() {
