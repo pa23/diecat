@@ -28,7 +28,6 @@ SOURCES += src/main.cpp \
     src/a2l.cpp \
     src/ecuscalar.cpp \
     src/intelhex.cpp \
-    src/comboboxitemdelegate.cpp \
     src/labelinfodialog.cpp
 
 HEADERS += src/mainwindow.hpp \
@@ -36,7 +35,6 @@ HEADERS += src/mainwindow.hpp \
     src/a2l.hpp \
     src/ecuscalar.hpp \
     src/intelhex.hpp \
-    src/comboboxitemdelegate.hpp \
     src/labelinfodialog.hpp
 
 FORMS += forms/mainwindow.ui \

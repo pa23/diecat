@@ -49,8 +49,6 @@ private slots:
     void on_action_JumpToSearchLine_triggered();
     void on_action_Select_triggered();
     void on_action_Unselect_triggered();
-    void on_action_SelectAll_triggered();
-    void on_action_UnselectAll_triggered();
     void on_action_LabelInfo_triggered();
     void on_action_Undo_triggered();
     void on_action_Redo_triggered();
@@ -66,12 +64,13 @@ private:
     QString m_lastHEXPath = QDir::currentPath();
     QSettings m_progSettings;
     QVector< QSharedPointer<ECUScalar> > m_scalars;
+    QVector<bool> m_scalarsInTable;
 
     void writeProgramSettings();
     void readProgramSettings();
 
-    void addParameterToTable();
-    void deleteParameterFromTable();
+    void addParameterToTable(ptrdiff_t);
+    void deleteParameterFromTable(ptrdiff_t);
 
     void readA2LInfo(const QString &);
     void readHEXData(const QString &);
