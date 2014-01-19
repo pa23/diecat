@@ -281,7 +281,12 @@ void MainWindow::on_action_LabelInfo_triggered() {
 
     QTableWidget *tableWidget_Description =
             m_labelInfoDialog->findChild<QTableWidget *>("tableWidget_Description");
+
     ptrdiff_t currItemInd = ui->tableWidget_Labels->currentRow();
+
+    if ( currItemInd < 0 ) {
+        return;
+    }
 
     tableWidget_Description->item(0, 1)->setText(m_scalars[currItemInd]->name());
     tableWidget_Description->item(1, 1)->setText(m_scalars[currItemInd]->shortDescription());
