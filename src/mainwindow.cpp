@@ -39,6 +39,33 @@
 #include <QTableWidgetSelectionRange>
 #include <QTime>
 #include <QDateTime>
+#include <QThread>
+#include <QtConcurrent/QtConcurrentRun>
+
+A2L *globA2L = 0;
+IntelHEX *globIHEX = 0;
+QVector< QSharedPointer<ECUScalar> > *globScalars = 0;
+
+void parseA2L() {
+
+    if ( !globA2L->readFile() ) {
+        QMessageBox::critical(0, QString(PROGNAME) + ": error", "Error occured during a2l file parsing!");
+        globA2L->clear();
+        return;
+    }
+
+    globA2L->fillScalarsInfo(*globScalars);
+    globA2L->clear();
+}
+
+void readHEX() {
+
+    if ( !globIHEX->readValues(*globScalars) ) {
+        QMessageBox::critical(0, QString(PROGNAME) + ": error", "Error occured during hex file reading!");
+    }
+
+    globIHEX->clear();
+}
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -112,6 +139,8 @@ void MainWindow::on_action_OpenProject_triggered() {
     ui->tableWidget_Scalars->setRowCount(0);
     m_scalars.clear();
 
+    QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+
     //
 
     QTime timer;
@@ -167,6 +196,8 @@ void MainWindow::on_action_OpenA2L_triggered() {
     ui->tableWidget_Labels->setRowCount(0);
     ui->tableWidget_Scalars->setRowCount(0);
     m_scalars.clear();
+
+    QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 
     //
 
@@ -447,30 +478,54 @@ void MainWindow::deleteParameterFromTable(ptrdiff_t ind) {
 
 void MainWindow::readA2LInfo(const QString &filepath) {
 
+    ui->statusBar->showMessage("Parsing a2l file. It may take a long time. Please wait...");
+    QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+
+    //
+
     QSharedPointer<A2L> a2l(new A2L(filepath));
+    globA2L = a2l.data();
+    globScalars = &m_scalars;
 
-    if ( !a2l->readFile() ) {
-        QMessageBox::critical(this, QString(PROGNAME) + ": error", "Error occured during a2l file reading!");
-        a2l.clear();
-        return;
-    }
+    QFuture<void> sepThrFun = QtConcurrent::run(parseA2L);
+    sepThrFun.waitForFinished();
 
-    a2l->fillScalarsInfo(m_scalars);
-    a2l->clear();
+    globA2L = 0;
+    globScalars = 0;
+
+    //
+
+    ui->statusBar->clearMessage();
 }
 
 void MainWindow::readHEXData(const QString &filepath) {
 
+    ui->statusBar->showMessage("Reading hex file. It may take a long time. Please wait...");
+    QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+
+    //
+
     QSharedPointer<IntelHEX> ihex(new IntelHEX(filepath));
+    globIHEX = ihex.data();
+    globScalars = &m_scalars;
 
-    if ( !ihex->readValues(m_scalars) ) {
-        QMessageBox::critical(this, QString(PROGNAME) + ": error", "Error occured during hex file reading!");
-    }
+    QFuture<void> sepThrFun = QtConcurrent::run(readHEX);
+    sepThrFun.waitForFinished();
 
-    ihex.clear();
+    globIHEX = 0;
+    globScalars = 0;
+
+    //
+
+    ui->statusBar->clearMessage();
 }
 
 void MainWindow::showLabels() {
+
+    ui->statusBar->showMessage("Displaying labels. Please wait...");
+    QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+
+    //
 
     m_scalarsInTable = QVector<bool>(m_scalars.size());
     ui->tableWidget_Labels->setRowCount(m_scalars.size());
@@ -483,4 +538,8 @@ void MainWindow::showLabels() {
 
     ui->tableWidget_Labels->resizeRowsToContents();
     ui->tableWidget_Labels->resizeColumnsToContents();
+
+    //
+
+    ui->statusBar->clearMessage();
 }
