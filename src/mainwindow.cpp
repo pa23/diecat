@@ -138,6 +138,7 @@ void MainWindow::on_action_OpenProject_triggered() {
     ui->tableWidget_Labels->setRowCount(0);
     ui->tableWidget_Scalars->setRowCount(0);
     m_scalars.clear();
+    ui->groupBox_Labels->setTitle("Labels");
 
     QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 
@@ -196,6 +197,7 @@ void MainWindow::on_action_OpenA2L_triggered() {
     ui->tableWidget_Labels->setRowCount(0);
     ui->tableWidget_Scalars->setRowCount(0);
     m_scalars.clear();
+    ui->groupBox_Labels->setTitle("Labels");
 
     QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 
@@ -233,6 +235,9 @@ void MainWindow::on_action_Select_triggered() {
     QTime timer;
     timer.start();
 
+    ui->statusBar->showMessage("Displaying values. Please wait...");
+    QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+
     //
 
     QTableWidgetSelectionRange selectedRange;
@@ -261,6 +266,7 @@ void MainWindow::on_action_Select_triggered() {
 
     //
 
+    ui->statusBar->clearMessage();
     ui->plainTextEdit_log->appendPlainText(
                     QDateTime::currentDateTime().toString("[yyyy-MM-dd_hh-mm-ss]")
                     + " Displaying values: "
@@ -272,6 +278,9 @@ void MainWindow::on_action_Unselect_triggered() {
 
     QTime timer;
     timer.start();
+
+    ui->statusBar->showMessage("Cleaning values table. Please wait...");
+    QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 
     //
 
@@ -301,6 +310,7 @@ void MainWindow::on_action_Unselect_triggered() {
 
     //
 
+    ui->statusBar->clearMessage();
     ui->plainTextEdit_log->appendPlainText(
                     QDateTime::currentDateTime().toString("[yyyy-MM-dd_hh-mm-ss]")
                     + " Cleaning values table: "
