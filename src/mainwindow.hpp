@@ -57,6 +57,8 @@ private:
     Ui::MainWindow *ui;
     LabelInfoDialog *m_labelInfoDialog;
 
+    QComboBox *m_comboBox_vTable;
+
     QString m_lastA2LPath = QDir::currentPath();
     QString m_lastHEXPath = QDir::currentPath();
     QSettings m_progSettings;
@@ -73,7 +75,8 @@ private:
     void readHEXData(const QString &);
     void showLabels();
 
-    QComboBox *m_comboBox_vTable;
+    void blockGUI();
+    void unblockGUI();
 
 };
 

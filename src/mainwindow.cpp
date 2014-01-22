@@ -140,6 +140,7 @@ void MainWindow::on_action_OpenProject_triggered() {
     m_scalars.clear();
     ui->groupBox_Labels->setTitle("Labels");
 
+    blockGUI();
     QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 
     //
@@ -171,6 +172,8 @@ void MainWindow::on_action_OpenProject_triggered() {
                 );
 
     ui->groupBox_Labels->setTitle("Labels (" + QString::number(m_scalars.size()) + ")");
+
+    unblockGUI();
 }
 
 void MainWindow::on_action_OpenA2L_triggered() {
@@ -199,6 +202,7 @@ void MainWindow::on_action_OpenA2L_triggered() {
     m_scalars.clear();
     ui->groupBox_Labels->setTitle("Labels");
 
+    blockGUI();
     QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 
     //
@@ -222,6 +226,8 @@ void MainWindow::on_action_OpenA2L_triggered() {
                 );
 
     ui->groupBox_Labels->setTitle("Labels (" + QString::number(m_scalars.size()) + ")");
+
+    unblockGUI();
 }
 
 void MainWindow::on_action_SearchLine_triggered() {
@@ -399,9 +405,14 @@ void MainWindow::on_action_About_triggered() {
 
 void MainWindow::searchTemplChanged(QString templ) {
 
+    templ = templ.toLower();
+    templ.replace("*", ".*");
+    templ = R"(^)" + templ + R"(.*$)";
+    QRegExp regexp(templ);
+
     for ( ptrdiff_t i=0; i<ui->tableWidget_Labels->rowCount(); i++ ) {
 
-        if ( ui->tableWidget_Labels->item(i, 0)->text().startsWith(templ, Qt::CaseInsensitive) ) {
+        if ( regexp.exactMatch(ui->tableWidget_Labels->item(i, 0)->text().toLower()) ) {
             ui->tableWidget_Labels->setCurrentCell(i, 0);
             break;
         }
@@ -552,4 +563,18 @@ void MainWindow::showLabels() {
     //
 
     ui->statusBar->clearMessage();
+}
+
+void MainWindow::blockGUI() {
+
+    ui->menuBar->setEnabled(false);
+    ui->groupBox_Labels->setEnabled(false);
+    ui->tabWidget->setEnabled(false);
+}
+
+void MainWindow::unblockGUI() {
+
+    ui->menuBar->setEnabled(true);
+    ui->groupBox_Labels->setEnabled(true);
+    ui->tabWidget->setEnabled(true);
 }
