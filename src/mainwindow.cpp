@@ -405,10 +405,7 @@ void MainWindow::on_action_About_triggered() {
 
 void MainWindow::searchTemplChanged(QString templ) {
 
-    templ = templ.toLower();
-    templ.replace("*", ".*");
-    templ = R"(^)" + templ + R"(.*$)";
-    QRegExp regexp(templ);
+    QRegExp regexp(R"(^)" + templ.toLower().replace("*", ".*") + R"(.*$)");
 
     for ( ptrdiff_t i=0; i<ui->tableWidget_Labels->rowCount(); i++ ) {
 
