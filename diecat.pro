@@ -40,6 +40,9 @@ HEADERS += src/mainwindow.hpp \
 FORMS += forms/mainwindow.ui \
     forms/labelinfodialog.ui
 
+RESOURCES = res/diecat.qrc
+RC_FILE += res/diecat.rc
+
 QMAKE_CXXFLAGS += -std=c++11 -W -pedantic
 
 unix: {

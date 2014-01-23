@@ -384,6 +384,7 @@ void MainWindow::on_action_About_triggered() {
             + "A2L/HEX file reader.<br><br>"
             "Copyright (C) 2013-2014 Artem Petrov "
             "<a href=\"mailto:pa2311@gmail.com\">pa2311@gmail.com</a><br><br>"
+            "Special thanks to Dmitry Epaneshnikov for a set of icons.<br><br>"
             "Source code hosting: "
             "<a href=\"https://github.com/pa23/diecat\">https://github.com/pa23/diecat</a><br>"
             "Author's blog (RU): "

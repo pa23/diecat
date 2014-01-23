@@ -19,6 +19,10 @@
   <property name="windowTitle">
    <string>diecat</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../res/diecat.qrc">
+    <normaloff>:/icons/icons/diecat.png</normaloff>:/icons/icons/diecat.png</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_4">
     <item>
@@ -317,7 +321,9 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="../res/diecat.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>action_Quit</sender>

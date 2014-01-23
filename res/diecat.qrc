@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>../icons/diecat.png</file>
+    </qresource>
+    <qresource prefix="/fonts"/>
+</RCC>
